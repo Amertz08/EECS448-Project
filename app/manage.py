@@ -3,7 +3,7 @@ import os
 
 from flask_script import Manager
 
-from app.create import create_app
+from create import create_app
 
 application = create_app(os.getenv('APP_CONFIG') or 'default')
 
