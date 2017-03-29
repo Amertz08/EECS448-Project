@@ -22,5 +22,11 @@ Bye
 All tests should be in `app/test`. Uses `pytest` module.
 
 ```bash
+# Don't forget to create test db
+mysql> create database EECS448_test;
+mysql> grant all privileges on EECS448_test.* to 'EECS448'@'localhost';
+```
+To run tests do the following.
+```bash
 $ python app/manage.py test
 ```
