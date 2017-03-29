@@ -27,6 +27,15 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
+    MYSQL_USER = 'EECS448'
+    MYSQL_PASS = 'z81mL2eJgK5y'
+    MYSQL_DB = 'EECS448_test'
+    MYSQL_HOST = 'localhost'
+
+    # Database info
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{usr}:{passwd}@{host}/{db}'.format(
+        usr=MYSQL_USER, passwd=MYSQL_PASS, host=MYSQL_HOST, db=MYSQL_DB
+    )
 
 
 class ProductionConfig(Config):
