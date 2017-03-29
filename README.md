@@ -17,3 +17,10 @@ mysql> exit
 Bye
 (EECS448)$ python app/manage.py runserver
 ```
+
+## Testing
+All tests should be in `app/test`. Uses `pytest` module.
+
+```bash
+$ python app/manage.py test
+```
