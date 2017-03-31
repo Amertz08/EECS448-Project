@@ -1,6 +1,7 @@
 from __future__ import unicode_literals, print_function, division, absolute_import
 
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
@@ -10,4 +11,17 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(255), default='')
     last_name = db.Column(db.String(255), default='')
+    password = db.Column(db.String(255))
     email = db.Column(db.String(255), unique=True, default='')
+
+    def __init__(self, first_name, last_name, email, password):
+        self.first_name = first_name
+        self.last_name = last_name,
+        self.email = email
+        self.password = self.hash_password(password);
+
+    def hash_password(self, password):
+        return generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
