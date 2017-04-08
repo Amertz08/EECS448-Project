@@ -42,7 +42,7 @@ def register():
             )
             db.session.add(user)
             commit(db.session)
-
+            flash('You are now registered')
             return redirect(url_for('main.index'))
         else:
             flash('Email is already registered')
