@@ -28,6 +28,9 @@ class User(UserMixin, db.Model):
     first_name = db.Column(db.String(255), default='')
     last_name = db.Column(db.String(255), default='')
     password = db.Column(db.String(255))
+    city = db.Column(db.String(32))
+    state = db.Column(db.String(2))
+    zip = db.Column(db.Integer)
     email = db.Column(db.String(255), unique=True, default='')
 
     def __init__(self, first_name, last_name, email, password):
