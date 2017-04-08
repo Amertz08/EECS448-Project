@@ -16,5 +16,5 @@ class RegistrationForm(Form):
     first_name = StringField('First Name', validators=[Required()])
     last_name = StringField('Last Name', validators=[Required()])
     email = StringField('Email', validators=[Required(), Email()])
-    password = PasswordField('Password', validators=[Required])
+    password = PasswordField('Password', validators=[Required()])
     submit = SubmitField('Register')
