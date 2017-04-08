@@ -1,12 +1,28 @@
 from __future__ import unicode_literals, print_function, division, absolute_import
 
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import exc as sqlalchemy_exc
+
 
 db = SQLAlchemy()
 
 
-class User(db.Model):
+def commit(session):
+    try:
+        # If commit is True, commit the transaction
+        session.commit()
+    except sqlalchemy_exc.SQLAlchemyError as commit_exc:
+        try:
+            session.rollback()
+        except sqlalchemy_exc.SQLAlchemyError as rollback_exc:
+            # If rollback fails, log the exception
+            pass
+        raise commit_exc
+
+
+class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(255), default='')
