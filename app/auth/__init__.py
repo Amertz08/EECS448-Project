@@ -17,7 +17,7 @@ def login():
         if user is not None:
             if user.check_password(form.password.data):
                 login_user(user, form.remember_me.data)
-                return redirect(url_for('main.index'))
+                return redirect(url_for('profile.index'))
             else:
                 flash('Email/Password combination incorrect')
         else:
