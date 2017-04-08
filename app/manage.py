@@ -27,6 +27,12 @@ def createdb():
 
 
 @manager.command
+def resetdb():
+    db.drop_all()
+    db.create_all()
+
+
+@manager.command
 def test():
     pytest.main()
 
