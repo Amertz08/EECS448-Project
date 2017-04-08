@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block page_content %}
+    <div class="container col-md-6 col-md-offset-3">
+    <h1>Profile <small><a href="{{ url_for('profile.edit') }}">Edit</a></small></h1>
+    <table class="table table-bordered">
+        <tr>
+            <td>First Name</td>
+            <td>{{ current_user.first_name }}</td>
+        </tr>
+        <tr>
+            <td>Last Name</td>
+            <td>{{ current_user.last_name }}</td>
+        </tr>
+        <tr>
+            <td>Email</td>
+            <td>{{ current_user.email }}</td>
+        </tr>
+        <tr>
+            <td>City</td>
+            <td>{{ current_user.city }}</td>
+        </tr>
+        <tr>
+            <td>State</td>
+            <td>{{ current_user.state }}</td>
+        </tr>
+        <tr>
+            <td>Zip Code</td>
+            <td>{{ current_user.zip_code }}</td>
+        </tr>
+    </table>
+    </div>
+{% endblock %}

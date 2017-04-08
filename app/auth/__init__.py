@@ -17,7 +17,7 @@ def login():
         if user is not None:
             if user.check_password(form.password.data):
                 login_user(user, form.remember_me.data)
-                return redirect(url_for('main.index'))
+                return redirect(url_for('profile.index'))
             else:
                 flash('Email/Password combination incorrect')
         else:
@@ -48,7 +48,7 @@ def register():
             db.session.add(user)
             commit(db.session)
             flash('You are now registered')
-            return redirect(url_for('main.index'))
+            return redirect(url_for('profile.index'))
         else:
             flash('Email is already registered')
     return render_template('auth/register.html', form=form)

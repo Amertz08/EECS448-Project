@@ -28,6 +28,9 @@ class User(UserMixin, db.Model):
     first_name = db.Column(db.String(255), default='')
     last_name = db.Column(db.String(255), default='')
     password = db.Column(db.String(255))
+    city = db.Column(db.String(32), default='')
+    state = db.Column(db.String(2), default='')
+    zip_code = db.Column(db.Integer)
     email = db.Column(db.String(255), unique=True, default='')
 
     def __init__(self, first_name, last_name, email, password):
@@ -49,3 +52,6 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
+
+    def update_password(self, password):
+        self.password = self.hash_password(password)

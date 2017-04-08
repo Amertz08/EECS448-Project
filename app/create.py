@@ -3,6 +3,7 @@ from __future__ import unicode_literals, print_function, division, absolute_impo
 from flask import Flask
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
+from flask_migrate import Migrate
 
 from config import config
 from models import db, User
@@ -10,6 +11,7 @@ from models import db, User
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -23,11 +25,14 @@ def create_app(config_level):
 
     db.init_app(app)
     login_manager.init_app(app)
+    migrate = Migrate(app, db)
 
     # Blueprints
     from main import main
     app.register_blueprint(main)
     from auth import auth
     app.register_blueprint(auth, url_prefix='/auth')
+    from profile import profile
+    app.register_blueprint(profile, url_prefix='/profile')
 
     return app
