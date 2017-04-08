@@ -6,14 +6,14 @@ from flask_migrate import MigrateCommand
 import pytest
 
 from create import create_app
-from models import db
+from models import db, User
 
 application = create_app(os.getenv('APP_CONFIG') or 'default')
 
 
 def make_shell_context():
     return dict(
-        app=application, db=db
+        app=application, db=db, User=User
     )
 
 manager = Manager(application)

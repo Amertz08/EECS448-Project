@@ -16,11 +16,19 @@ class User(db.Model):
 
     def __init__(self, first_name, last_name, email, password):
         self.first_name = first_name
-        self.last_name = last_name,
+        self.last_name = last_name
         self.email = email
-        self.password = self.hash_password(password);
+        self.password = self.hash_password(password)
 
-    def hash_password(self, password):
+    def __repr__(self):
+        return '<User {first} {last} {email}>'.format(
+            first=self.first_name,
+            last=self.last_name,
+            email=self.email
+        )
+
+    @staticmethod
+    def hash_password(password):
         return generate_password_hash(password)
 
     def check_password(self, password):
