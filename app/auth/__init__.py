@@ -14,9 +14,14 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user.check_password(form.password.data):
-            login_user(user, form.remember_me.data)
-            return redirect(url_for('main.index'))
+        if user is not None:
+            if user.check_password(form.password.data):
+                login_user(user, form.remember_me.data)
+                return redirect(url_for('main.index'))
+            else:
+                flash('Email/Password combination incorrect')
+        else:
+            flash('Email/Password combination incorrect')
     return render_template('auth/login.html', form=form)
 
 
@@ -46,5 +51,4 @@ def register():
             return redirect(url_for('main.index'))
         else:
             flash('Email is already registered')
-            return render_template('auth/register.html', form=form)
     return render_template('auth/register.html', form=form)
