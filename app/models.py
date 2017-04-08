@@ -30,7 +30,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(255))
     city = db.Column(db.String(32), default='')
     state = db.Column(db.String(2), default='')
-    zip = db.Column(db.Integer)
+    zip_code = db.Column(db.Integer)
     email = db.Column(db.String(255), unique=True, default='')
 
     def __init__(self, first_name, last_name, email, password):
