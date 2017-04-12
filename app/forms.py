@@ -31,3 +31,8 @@ class EditProfileForm(Form):
     state = StringField('State', validators=[Length(1, 2)])
     zip_code = IntegerField('Zip code')
     submit = SubmitField('Update')
+
+
+class SearchForm(Form):
+    destination = StringField('Destination', validators=[Required()])
+    submit = SubmitField('Search')
