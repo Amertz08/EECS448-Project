@@ -17,7 +17,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -141,3 +140,6 @@ crashlytics-build.properties
 fabric.properties
 
 local_config.py
+.sass-cache
+JSON
+JSON.map

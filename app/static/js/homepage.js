@@ -1,12 +1,13 @@
 $(document).ready(function() {
    var searchForm = $("#destination");
 
-   searchForm.on('input', function (event) {
-       event.preventDefault();
-       $.get('/autocomplete/search', {'destination': $(this).val()})
-           .done(function (data) {
-               // response from endpoint
+   searchForm.autocomplete({
+       source: function (request, response) {
+           $.get('/autocomplete/search', {
+               destination: request.term
+           }, function (data) {
                console.log(data);
            });
-   });
+       }
+   })
 });
