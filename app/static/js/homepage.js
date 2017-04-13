@@ -1,8 +1,9 @@
-$(document).ready(function() {
-   var searchForm = $("#destination");
+function getPlaceID(field) {
+    var inputField = "#" + field;
+    var hiddenField = "#" + field + "_place_id";
 
-   searchForm.autocomplete({
-       source: function (request, response) {
+    $(inputField).autocomplete({
+        source: function (request, response) {
            $.get('/autocomplete/search', {
                destination: request.term
            }, function (data) {
@@ -10,7 +11,12 @@ $(document).ready(function() {
            });
        },
        select: function (event, ui) {
-           $("#place_id").val(ui.item.data.place_id)
+           $(hiddenField).val(ui.item.data.place_id)
        }
-   })
+    })
+}
+
+$(document).ready(function() {
+   getPlaceID('destination');
+   getPlaceID('origin');
 });
