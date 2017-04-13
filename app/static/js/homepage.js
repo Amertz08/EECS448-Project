@@ -6,8 +6,11 @@ $(document).ready(function() {
            $.get('/autocomplete/search', {
                destination: request.term
            }, function (data) {
-               console.log(data);
+               response(data);
            });
+       },
+       select: function (event, ui) {
+           $("#place_id").val(ui.item.data.place_id)
        }
    })
 });

@@ -7,6 +7,17 @@ from skyAPI import flight_service
 auto = Blueprint('auto', __name__)
 
 
+def _search_data_gen(results):
+    for result in results:
+        yield {
+            'label': '{city}, {country}'.format(city=result['PlaceName'], country=result['CountryName']),
+            'value': '{city}, {country}'.format(city=result['PlaceName'], country=result['CountryName']),
+            'data': {
+                'place_id': result['PlaceId']
+            }
+        }
+
+
 @auto.route('/search')
 def search():
     args = request.args
@@ -17,9 +28,9 @@ def search():
             'currency': 'USD',
             'market': 'US',
             'locale': 'en-US',
-            'id': destination
+            'query': destination
         }
         response = flight_service.location_autosuggest(**kwargs)
-        results = response.json()
-
+        places = response.json()['Places']
+        results = [place for place in _search_data_gen(places)]
     return jsonify(results)
