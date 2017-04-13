@@ -34,6 +34,8 @@ class EditProfileForm(Form):
 
 
 class SearchForm(Form):
+    origin = StringField('Origin', validators=[Required()])
     destination = StringField('Destination', validators=[Required()])
-    place_id = HiddenField('place_id')
+    dest_place_id = HiddenField('dest_place_id')
+    origin_place_id = HiddenField('origin_place_id')
     submit = SubmitField('Search')

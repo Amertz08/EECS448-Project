@@ -11,5 +11,5 @@ main = Blueprint('main', __name__)
 def index():
     form = SearchForm()
     if form.validate_on_submit():
-        print(form.place_id.data)
+        print(form.dest_place_id.data, form.origin_place_id.data)
     return render_template('index.html', form=form)
