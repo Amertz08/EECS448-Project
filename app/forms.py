@@ -1,7 +1,9 @@
 from __future__ import unicode_literals, print_function, division, absolute_import
 
 from flask_wtf import Form
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, \
+    BooleanField, IntegerField, HiddenField
+from wtforms.fields.html5 import DateField
 from wtforms.validators import Required, Length, Email, EqualTo
 
 
@@ -31,3 +33,13 @@ class EditProfileForm(Form):
     state = StringField('State', validators=[Length(1, 2)])
     zip_code = IntegerField('Zip code')
     submit = SubmitField('Update')
+
+
+class SearchForm(Form):
+    origin = StringField('Origin', validators=[Required()])
+    destination = StringField('Destination', validators=[Required()])
+    dest_place_id = HiddenField('dest_place_id')
+    origin_place_id = HiddenField('origin_place_id')
+    outbound_date = DateField('Fly out date')
+    inbound_date = DateField('Return date')
+    submit = SubmitField('Search')

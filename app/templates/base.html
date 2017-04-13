@@ -2,7 +2,9 @@
 {% block title %}EECS 448{% endblock %}
 {% block styles %}
 {{ super() }}
-
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='lib/jquery-ui/jquery-ui.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='lib/jquery-ui/jquery-ui.structure.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='lib/jquery-ui/jquery-ui-bootstrap.css') }}">
 {% endblock %}
 {% block navbar %}
 <nav class="navbar navbar-default">
@@ -53,6 +55,12 @@
 {% block scripts %}
 {{super()}}
 <script src="https://use.fontawesome.com/670c3625eb.js"></script>
+    <script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='lib/jquery.confirm.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/jquery-ui/jquery-ui.js') }}"></script>
     {% block extra_scripts %}
     {% endblock %}
 {% endblock %}

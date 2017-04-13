@@ -34,5 +34,7 @@ def create_app(config_level):
     app.register_blueprint(auth, url_prefix='/auth')
     from profile import profile
     app.register_blueprint(profile, url_prefix='/profile')
+    from autocomplete import auto
+    app.register_blueprint(auto, url_prefix='/autocomplete')
 
     return app
