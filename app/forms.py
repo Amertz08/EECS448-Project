@@ -2,7 +2,7 @@ from __future__ import unicode_literals, print_function, division, absolute_impo
 
 from flask_wtf import Form
 from wtforms import StringField, PasswordField, SubmitField, \
-    BooleanField, IntegerField, HiddenField
+    BooleanField, IntegerField, HiddenField, SelectField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import Required, Length, Email, EqualTo
 
@@ -38,8 +38,11 @@ class EditProfileForm(Form):
 class SearchForm(Form):
     origin = StringField('Origin', validators=[Required()])
     destination = StringField('Destination', validators=[Required()])
-    dest_place_id = HiddenField('dest_place_id')
+    destination_place_id = HiddenField('destination_place_id')
     origin_place_id = HiddenField('origin_place_id')
     outbound_date = DateField('Fly out date')
     inbound_date = DateField('Return date')
+    adults = SelectField('Adults (16+)', choices=[(n, n) for n in range(1, 9)], coerce=int)
+    children = SelectField('Children (1-16)', choices=[(n, n) for n in range(9)], coerce=int)
+    infants = SelectField('Infants (under 12 months)', choices=[(n, n) for n in range(9)], coerce=int)
     submit = SubmitField('Search')
