@@ -1,0 +1,147 @@
+{
+  "Status": "UpdatesComplete",
+  "Itineraries": [
+    {
+      "OutboundLegId": "13927-1704170515--31722-0-15062-1704170650",
+      "InboundLegId": "15062-1704210730--31722-0-13927-1704210906",
+      "PricingOptions": [
+        {
+          "Price": 480.4,
+          "Agents": [
+            4132306
+          ],
+          "DeeplinkUrl": "http://partners.api.skyscanner.net/apiservices/deeplink/v2?_cje=sMLXQXdi2EJ33LhoYvzxR8BMFoynMXE9fwlQyV4CAKNeQZR9hCMKwUj6IedPpaez&url=http%3a%2f%2fwww.apideeplink.com%2ftransport_deeplink%2f4.0%2fUS%2fen-us%2fUSD%2fuair%2f2%2f13927.15062.2017-04-17%2c15062.13927.2017-04-21%2fair%2fairli%2fflights%3fitinerary%3dflight%7c-31722%7c3497%7c13927%7c2017-04-17T05%3a15%7c15062%7c2017-04-17T06%3a50%2cflight%7c-31722%7c4496%7c15062%7c2017-04-21T07%3a30%7c13927%7c2017-04-21T09%3a06%26carriers%3d-31722%26passengers%3d1%26channel%3ddataapi%26cabin_class%3deconomy%26facilitated%3dfalse%26ticket_price%3d480.40%26is_npt%3dfalse%26is_multipart%3dfalse%26client_id%3dskyscanner_b2b%26request_id%3da3f28209-7566-4e04-bbb6-b637c01e4ab3%26deeplink_ids%3deu-central-1.prod_1e097c91cf4c6096728734386bd4aba2%26commercial_filters%3dfalse%26q_datetime_utc%3d2017-04-14T20%3a23%3a01%26source_website_id%3dampc",
+          "QuoteAgeInMinutes": 0
+        }
+      ],
+      "BookingDetailsLink": {
+        "Body": "OutboundLegId=13927-1704170515--31722-0-15062-1704170650&InboundLegId=15062-1704210730--31722-0-13927-1704210906",
+        "Uri": "/apiservices/pricing/v1.0/0cc36532c6034fc88f64f54d9aed315b_rrsqbjcb_06a13f0a788e803fcc56e78802891a26/booking",
+        "Method": "PUT"
+      }
+    }
+  ],
+  "Currencies": [
+    {
+      "SpaceBetweenAmountAndSymbol": false,
+      "Code": "USD",
+      "SymbolOnLeft": true,
+      "DecimalSeparator": ".",
+      "Symbol": "$",
+      "ThousandsSeparator": ",",
+      "RoundingCoefficient": 0,
+      "DecimalDigits": 2
+    }
+  ],
+  "Places": [
+    {
+      "Name": "Kansas City International",
+      "Code": "MCI",
+      "Type": "Airport",
+      "Id": 13927,
+      "ParentId": 5114
+    }
+  ],
+  "Carriers": [
+    {
+      "DisplayCode": "AS",
+      "ImageUrl": "http://s1.apideeplink.com/images/airlines/AS.png",
+      "Code": "AS",
+      "Id": 851,
+      "Name": "Alaska Airlines"
+    }
+  ],
+  "Segments": [
+    {
+      "DestinationStation": 16177, // Place id
+      "OriginStation": 13927, // Place id
+      "FlightNumber": "683",
+      "Directionality": "Outbound",
+      "ArrivalDateTime": "2017-04-17T08:49:00",
+      "Carrier": 851, // carrier id
+      "Duration": 224, // mins
+      "DepartureDateTime": "2017-04-17T07:05:00",
+      "Id": 0,
+      "JourneyMode": "Flight",
+      "OperatingCarrier": 851 // carrier id
+    }
+  ],
+  "Query": {
+    "InboundDate": "2017-04-21",
+    "DestinationPlace": "1573",
+    "CabinClass": "Economy",
+    "Adults": 1,
+    "Locale": "en-us",
+    "Country": "US",
+    "OutboundDate": "2017-04-17",
+    "Currency": "USD",
+    "OriginPlace": "5114",
+    "LocationSchema": "Default",
+    "Infants": 0,
+    "GroupPricing": false,
+    "Children": 0
+  },
+  "Legs": [
+    {
+      "Arrival": "2017-04-18T06:30:00",
+      "DestinationStation": 15062,
+      "OriginStation": 13927,
+      "Carriers": [
+        851
+      ],
+      "Departure": "2017-04-17T07:05:00",
+      "Stops": [
+        16177
+      ],
+      "SegmentIds": [
+        0,
+        1
+      ],
+      "Directionality": "Outbound",
+      "Duration": 1405,
+      "FlightNumbers": [
+        {
+          "CarrierId": 851,
+          "FlightNumber": "683"
+        },
+        {
+          "CarrierId": 851,
+          "FlightNumber": "20"
+        }
+      ],
+      "OperatingCarriers": [
+        851
+      ],
+      "Id": "13927-1704170705--32593-1-15062-1704180630",
+      "JourneyMode": "Flight"
+    },
+    {
+      "Arrival": "2017-04-17T16:11:00",
+      "DestinationStation": 15062,
+      "OriginStation": 13927,
+      "Carriers": [
+        851
+      ],
+      "Departure": "2017-04-17T07:05:00",
+      "Stops": [
+        16177
+      ],
+      "SegmentIds": [
+        0,
+        4
+      ],
+      "Directionality": "Outbound",
+      "Duration": 546,
+      "FlightNumbers": [
+        {
+          "CarrierId": 851,
+          "FlightNumber": "683"
+        },
+        {
+          "CarrierId": 851,
+          "FlightNumber": "34"
+        }
+      ]
+    }
+  ]
+}

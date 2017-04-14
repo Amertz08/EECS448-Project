@@ -18,7 +18,7 @@ def index():
         kwargs = {
             'country': 'US',
             'currency': 'USD',
-            'local': 'en-US',
+            'locale': 'en-US',
             'originplace': form.origin_place_id.data,
             'destinationplace': form.destination_place_id.data,
             'inbounddate': arrow.get(form.inbound_date.data).format('YYYY-MM-DD'),
@@ -27,7 +27,7 @@ def index():
             'children': form.children.data,
             'infants': form.infants.data
         }
-        results = flight_service.get_result(**kwargs).parsed
+        results = flight_service.get_result(**kwargs).json()
 
     context = {
         'form': form,
