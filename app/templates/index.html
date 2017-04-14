@@ -5,9 +5,14 @@
 
 {% block page_content %}
     <h1>Search for flights {% if current_user.is_authenticated %}{{ current_user.first_name }}{% endif %}</h1>
-    <div class="col-md-8 col-md-offset-2">
-        {{ wtf.quick_form(form) }}
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            {{ wtf.quick_form(form) }}
+        </div>
     </div>
+    {% if results %}
+    do something
+    {% endif %}
 {% endblock %}
 
 {% block extra_scripts %}
