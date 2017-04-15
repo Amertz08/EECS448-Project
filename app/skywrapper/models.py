@@ -395,6 +395,12 @@ class Currency(BaseModel):
     def __repr__(self):
         return '<Currency {}>'.format(self.code)
 
+    def __eq__(self, other):
+        return self.code == other.code
+
+    def __ne__(self, other):
+        return self.code != other.code
+
     def init(self, **kwargs):
         self.code = kwargs.get('Code')
         self.symbol = kwargs.get('Symbol')
@@ -404,12 +410,6 @@ class Currency(BaseModel):
         self.thousands_separator = kwargs.get('ThousandsSeparator')
         self.rounding_coefficient = kwargs.get('RoundingCoefficent')
         self.decimal_digits = kwargs.get('DecimalDigitis')
-
-    def __eq__(self, other):
-        return self.code == other.code
-
-    def __ne__(self, other):
-        return self.code != other.code
 
 
 class PriceOption(BaseModel):
@@ -431,3 +431,30 @@ class PriceOption(BaseModel):
 
     def __repr__(self):
         return '<PriceOption {}>'.format(self.price)
+
+
+class Agent(BaseModel):
+    id = None
+    name = None
+    image_url = None
+    status = None
+    optimize_for_mobile = False
+    booking_number = None
+    type = None
+
+    def __iter__(self, **kwargs):
+        if kwargs:
+            self.init(**kwargs)
+
+    def __repr__(self):
+        return '<Agent name: {0} type: {1}>'.format(self.name, self.type)
+
+    def init(self, **kwargs):
+        self.id = kwargs.get('Id')
+        self.name = kwargs.get('Name')
+        self.image_url = kwargs.get('ImageUrl')
+        self.status = kwargs.get('Status')
+        self.optimize_for_mobile = kwargs.get('OptimizedForMobile')
+        self.booking_number = kwargs.get('BookingNumber')
+        self.type = kwargs.get('Type')
+
