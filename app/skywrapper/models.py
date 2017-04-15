@@ -175,12 +175,6 @@ class Result(EqualityMixin, BaseModel):
     def __repr__(self):
         return '<Result id: {0}>'.format(self.id)
 
-    def __eq__(self, other):
-        return self.id == other.id
-
-    def __ne__(self, other):
-        return self.id != other.id
-
     def _parse_segments(self, segments, relevant_data):
         """
 
