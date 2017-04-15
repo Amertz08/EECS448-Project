@@ -1,6 +1,7 @@
 from __future__ import unicode_literals, print_function, division, absolute_import
 
 import datetime
+from enum import Enum
 
 import arrow
 
@@ -12,6 +13,11 @@ def format_datetime(time, is_datetime=True):
         return arrow.get(time).datetime
     else:
         return arrow.get(time).date()
+
+
+class Direction(Enum):
+    inbound = 'Inbound'
+    outbound = 'Outbound'
 
 
 class LiveFlights(Flights):
@@ -86,110 +92,83 @@ class QueryResults(BaseModel):
 
     def _parse_response_generator(self, response):
         """
-
+        
         :param response: 
         :return: 
         """
         results = response.json()
 
+        itineraries = results['Itineraries']
+        legs = results['Legs']
         segments = results['Segments']
-        for leg in results['Legs']:
-            segment_ids = leg['SegmentIds']
-            relevant_data = {
-                'places': results['Places'],
-                'carriers': results['Carriers']
-            }
+        relevant_data = {
+            'places': results['Places'],
+            'carriers': results['carriers']
+        }
+        outbound_leg = None
+        inbound_leg = None
+        for l in legs:
+            for i in itineraries:
+                if i['OutboundLegId'] == l['Id']:
+                    segment_ids = l['SegmentIds']
+                    filtered_segments = [
+                        segment for segment in self._segment_generator(segments) if segment['id'] in segment_ids
+                    ]
+                    outbound_leg = Leg(
+                        _id=l['Id'],
+                        directionality=Direction.outbound,
+                        segments=[
+                            segment for segment in self._parse_segments_generator(filtered_segments, relevant_data)
+                        ]
+                    )
+                    if inbound_leg is not None:
+                        break
+                elif i['InboundLegId'] == l['Id']:
+                    segment_ids = l['SegmentIds']
+                    filtered_segments = [
+                        segment for segment in self._segment_generator(segments) if segment['id'] in segment_ids
+                    ]
+                    inbound_leg = Leg(
+                        _id=l['Id'],
+                        directionality=Direction.inbound,
+                        segments=[
+                            segment for segment in self._parse_segments_generator(filtered_segments, relevant_data)
+                        ]
+                    )
+                    if outbound_leg is not None:
+                        break
             yield Result(
-                _id=leg['Id'],
-                departure_time=leg['Departure'],
-                arrival_time=leg['Arrival'],
-                segments=[segment for segment in self._parse_segments_generator(segments, segment_ids)],
-                relevant_data=relevant_data
+                departure_time=l['Departure'],
+                arrival_time=l['Arrival'],
+                legs=[outbound_leg, inbound_leg]
             )
 
     @staticmethod
-    def _parse_segments_generator(segments, segment_ids):
+    def _segment_generator(segments):
         """
 
-        :param segments: 
-        :param segment_ids: 
-        :return: 
+        :param segments:
+        :return:
         """
-        for segment_id in segment_ids:
-            for segment in segments:
-                if segment['Id'] == segment_id:
-                    yield {
-                        'id': segment_id,
-                        'origin_id': segment['OriginStation'],
-                        'destination_id': segment['DestinationStation'],
-                        'flight_number': segment['FlightNumber'],
-                        'directionality': segment['Directionality'],
-                        'departure_time': format_datetime(segment['DepartureDateTime']),
-                        'arrival_time': format_datetime(segment['ArrivalDateTime']),
-                        'carrier_id': segment['Carrier'],
-                        'duration': segment['Duration']
-                    }
-                    break
-
-
-class Query(BaseModel):
-    def __init__(self, **kwargs):
-        if kwargs:
-            self.set_query(**kwargs)
-
-    def __repr__(self):
-        return '<Query origin: {0} destination: {1}>'.format(self.originplace, self.destinationplace)
-
-    def set_query(self, **kwargs):
-        """
-
-        :param kwargs: 
-        :return: 
-        """
-        self.originplace = kwargs['originplace']
-        self.destinationplace = kwargs['destinationplace']
-        self.outbounddate = kwargs['outbounddate']
-        self.inbounddate = kwargs['inbounddate']
-        self.adults = kwargs.get('adults') if kwargs.get('adults') else 0
-        self.children = kwargs.get('adults') if kwargs.get('adults') else 0
-        self.infants = kwargs.get('infants') if kwargs.get('infants') else 0
-        self.country = kwargs.get('country') if kwargs.get('country') else 'US'
-        self.currency = kwargs.get('currency') if kwargs.get('currency') else 'USD'
-        self.locale = kwargs.get('locale') if kwargs.get('locale') else 'en-US'
-
-
-class Result(EqualityMixin, BaseModel):
-    def __init__(self, _id, departure_time, arrival_time, segments, relevant_data):
-        """
-
-        :param _id: 
-        :param departure_time: 
-        :param arrival_time: 
-        :param segments: 
-        """
-        self.id = _id
-        self.departure_time = departure_time
-        self.arrival_time = arrival_time
-        self.segments = self._parse_segments(segments, relevant_data)
-
-    def __repr__(self):
-        return '<Result id: {0}>'.format(self.id)
-
-    def _parse_segments(self, segments, relevant_data):
-        """
-
-        :param segments: 
-        :param relevant_data: 
-        :return: 
-        """
-        return [segment for segment in self._parse_segments_generator(segments, relevant_data)]
+        for segment in segments:
+            yield {
+                'id': segment['Id'],
+                'origin_id': segment['OriginStation'],
+                'destination_id': segment['DestinationStation'],
+                'flight_number': segment['FlightNumber'],
+                'directionality': segment['Directionality'],
+                'departure_time': format_datetime(segment['DepartureDateTime']),
+                'arrival_time': format_datetime(segment['ArrivalDateTime']),
+                'carrier_id': segment['Carrier'],
+                'duration': segment['Duration']
+            }
 
     def _parse_segments_generator(self, segments, relevant_data):
         """
 
-        :param segments: 
-        :param relevant_data: 
-        :return: 
+        :param segments:
+        :param relevant_data:
+        :return:
         """
         places = relevant_data['places']
         carriers = relevant_data['carriers']
@@ -226,8 +205,7 @@ class Result(EqualityMixin, BaseModel):
                 departure_time=segment['departure_time'],
                 arrival_time=segment['arrival_time'],
                 duration=segment['duration'],
-                flight=flight,
-                directionality=segment['directionality']
+                flight=flight
             )
             yield segment
 
@@ -235,9 +213,9 @@ class Result(EqualityMixin, BaseModel):
     def _build_carrier(carrier_id, carriers):
         """
 
-        :param carrier_id: 
-        :param carriers: 
-        :return: 
+        :param carrier_id:
+        :param carriers:
+        :return:
         """
         for carrier in carriers:
             if carrier['Id'] == carrier_id:
@@ -250,9 +228,67 @@ class Result(EqualityMixin, BaseModel):
                 )
 
 
+class Query(BaseModel):
+    def __init__(self, **kwargs):
+        if kwargs:
+            self.set_query(**kwargs)
+
+    def __repr__(self):
+        return '<Query origin: {0} destination: {1}>'.format(self.originplace, self.destinationplace)
+
+    def set_query(self, **kwargs):
+        """
+
+        :param kwargs: 
+        :return: 
+        """
+        self.originplace = kwargs['originplace']
+        self.destinationplace = kwargs['destinationplace']
+        self.outbounddate = kwargs['outbounddate']
+        self.inbounddate = kwargs['inbounddate']
+        self.adults = kwargs.get('adults') if kwargs.get('adults') else 0
+        self.children = kwargs.get('adults') if kwargs.get('adults') else 0
+        self.infants = kwargs.get('infants') if kwargs.get('infants') else 0
+        self.country = kwargs.get('country') if kwargs.get('country') else 'US'
+        self.currency = kwargs.get('currency') if kwargs.get('currency') else 'USD'
+        self.locale = kwargs.get('locale') if kwargs.get('locale') else 'en-US'
+
+
+class Result(EqualityMixin, BaseModel):
+    def __init__(self, departure_time, arrival_time, legs=None):
+        """
+        
+        :param departure_time: 
+        :param arrival_time: 
+        :param legs: 
+        """
+        self.departure_time = departure_time
+        self.arrival_time = arrival_time
+        if not legs:
+            self.legs = []
+
+    def __repr__(self):
+        return '<Result departure_time: {0} arrival_time: {1} >'.format(self.departure_time, self.arrival_time)
+
+
+class Leg(EqualityMixin, BaseModel):
+    def __init__(self, _id, directionality, segments):
+        """
+        
+        :param _id: 
+        :param segments: 
+        """
+        self.id = _id
+        self.directionality = directionality
+        self.segments = segments
+
+    def __repr__(self):
+        return '<Leg id: {0} directionality: {1}>'.format(self.id, self.directionality)
+
+
 class Segment(EqualityMixin, BaseModel):
     def __init__(self, _id, origin, destination, departure_time,
-                 arrival_time, duration, flight, directionality):
+                 arrival_time, duration, flight):
         """
 
         :param _id: 
@@ -262,7 +298,6 @@ class Segment(EqualityMixin, BaseModel):
         :param arrival_time: 
         :param duration: 
         :param flight: 
-        :param directionality: 
         """
         self.id = _id
         self.origin = origin
@@ -271,7 +306,6 @@ class Segment(EqualityMixin, BaseModel):
         self.arrival_time = arrival_time
         self.duration = duration
         self.flight = flight
-        self.directionality = directionality
 
     def __repr__(self):
         return '<Segment id: {0} flight_number: {1}>'.format(self.id, self.flight.number)
