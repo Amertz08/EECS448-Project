@@ -74,6 +74,7 @@ class QueryResults(BaseModel):
         """
         results = response.json()
 
+        self.currency = Currency(**results['Currencies'].pop())
         itineraries = results['Itineraries']
         legs = results['Legs']
         segments = results['Segments']
@@ -387,8 +388,11 @@ class Currency(BaseModel):
         if kwargs:
             self.init(**kwargs)
 
+    def __repr__(self):
+        return '<Currency {}>'.format(self.code)
+
     def init(self, **kwargs):
-        self.code = kwargs.get('SpaceBetweenAmountAndSymbol')
+        self.code = kwargs.get('Code')
         self.symbol = kwargs.get('Symbol')
         self.space_between_amount_and_symbol = kwargs.get('SpaceBetweenAmountAndSymbol')
         self.symbol_on_left = kwargs.get('SymbolOnLeft')
