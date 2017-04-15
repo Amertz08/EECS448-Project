@@ -74,6 +74,29 @@ class QueryResults(BaseModel):
         else:
             return []
 
+    def _parse_response_generator(self, response):
+        """
+
+        :param response: 
+        :return: 
+        """
+        results = response.json()
+
+        segments = results['Segments']
+        for leg in results['Legs']:
+            segment_ids = leg['SegmentIds']
+            relevant_data = {
+                'places': results['Places'],
+                'carriers': results['Carriers']
+            }
+            yield Result(
+                _id=leg['Id'],
+                departure_time=leg['Departure'],
+                arrival_time=leg['Arrival'],
+                segments=[segment for segment in self._parse_segments_generator(segments, segment_ids)],
+                relevant_data=relevant_data
+            )
+
     @staticmethod
     def _parse_segments_generator(segments, segment_ids):
         """
@@ -97,29 +120,6 @@ class QueryResults(BaseModel):
                         'duration': segment['Duration']
                     }
                     break
-
-    def _parse_response_generator(self, response):
-        """
-
-        :param response: 
-        :return: 
-        """
-        results = response.json()
-
-        segments = results['Segments']
-        for leg in results['Legs']:
-            segment_ids = leg['SegmentIds']
-            relevant_data = {
-                'places': results['Places'],
-                'carriers': results['Carriers']
-            }
-            yield Result(
-                _id=leg['Id'],
-                departure_time=leg['Departure'],
-                arrival_time=leg['Arrival'],
-                segments=[segment for segment in self._parse_segments_generator(segments, segment_ids)],
-                relevant_data=relevant_data
-            )
 
 
 class Query(BaseModel):
@@ -241,7 +241,8 @@ class Result(BaseModel):
 
 
 class Segment(BaseModel):
-    def __init__(self, _id, origin, destination, departure_time, arrival_time, duration, flight, directionality):
+    def __init__(self, _id, origin, destination, departure_time,
+                 arrival_time, duration, flight, directionality):
         """
 
         :param _id: 
