@@ -42,11 +42,13 @@ class BaseModel(object):
 
 
 class QueryResults(BaseModel):
+    currency = None  # TODO: will there ever be more than 1 currency?
+
     def __init__(self, query, response):
         """
 
-        :param query: 
-        :param response: 
+        :param query: Query object
+        :param response: response object
         """
         self.query = query
         self.status = response.status_code
@@ -61,9 +63,9 @@ class QueryResults(BaseModel):
 
     def _parse_response(self, response):
         """
-
-        :param response: 
-        :return: 
+        Returns list of Result objects from API response
+        :param response: response object 
+        :return: [] or list of Result objects
         """
         if self.status == 200:
             return [result for result in self._parse_response_generator(response)]
@@ -72,9 +74,9 @@ class QueryResults(BaseModel):
 
     def _parse_response_generator(self, response):
         """
-        
-        :param response: 
-        :return: 
+        Yields Response objects after translating API data into python objects
+        :param response: response object
+        :return: generates Result object
         """
         results = response.json()
 
@@ -134,9 +136,9 @@ class QueryResults(BaseModel):
     @staticmethod
     def _segment_generator(segments):
         """
-
-        :param segments:
-        :return:
+        Yields segment data translated from API response
+        :param segments: list of dictionaries returned from 'Segments' key on API response
+        :return: generates dictionary from data stored in dictionaries in 'Segments' key on API response
         """
         for segment in segments:
             yield {
@@ -153,9 +155,9 @@ class QueryResults(BaseModel):
 
     def _parse_segments_generator(self, segments, relevant_data):
         """
-
-        :param segments:
-        :param relevant_data:
+        Yields Segment object with only applicable data
+        :param segments: List of dictionaries that have been preparse by _segment_generator
+        :param relevant_data: 
         :return:
         """
         places = relevant_data['places']
@@ -200,10 +202,10 @@ class QueryResults(BaseModel):
     @staticmethod
     def _build_carrier(carrier_id, carriers):
         """
-
-        :param carrier_id:
-        :param carriers:
-        :return:
+        Returns Carrier object with relevant data
+        :param carrier_id: id we care about
+        :param carriers: List of carrier data
+        :return: Carrier Object
         """
         for carrier in carriers:
             if carrier['Id'] == carrier_id:
@@ -237,9 +239,8 @@ class Query(BaseModel):
 
     def init(self, **kwargs):
         """
-
-        :param kwargs: 
-        :return: 
+        Initializes all attributes
+        :param kwargs: parameters used in API call 
         """
         self.originplace = kwargs['originplace']
         self.destinationplace = kwargs['destinationplace']
@@ -257,9 +258,10 @@ class Result(EqualityMixin, BaseModel):
     def __init__(self, outbound_times, outbound_leg, inbound_times, inbound_leg=None):
         """
         
-        :param departure_time: 
-        :param arrival_time: 
-        :param legs: 
+        :param outbound_times: dictionary with departure/arrival times for outbound leg
+        :param outbound_leg: Leg object for outbound leg
+        :param inbound_times: dictionary with departure/arrival times for inbound leg
+        :param inbound_leg: Leg obejct for inbound leg
         """
         self.outbound_times = outbound_times
         self.outbound_leg = outbound_leg
@@ -275,9 +277,9 @@ class Result(EqualityMixin, BaseModel):
     @staticmethod
     def _calc_duration(times):
         """
-        
-        :param times: 
-        :return: 
+        Calculates trip duration in minutes
+        :param times: dictionary with departure/arrival times for leg
+        :return: None or minutes for total trip
         """
         if times is not None:
             start = arrow.get(times['departure'])
@@ -291,6 +293,7 @@ class Leg(EqualityMixin, BaseModel):
         """
         
         :param _id: 
+        :param directionality: 
         :param segments: 
         """
         self.id = _id
@@ -305,7 +308,7 @@ class Segment(EqualityMixin, BaseModel):
     def __init__(self, _id, origin, destination, departure_time,
                  arrival_time, duration, flight):
         """
-
+        
         :param _id: 
         :param origin: 
         :param destination: 
@@ -327,7 +330,7 @@ class Segment(EqualityMixin, BaseModel):
 
 
 class Place(EqualityMixin, BaseModel):
-    def __init__(self, _id, name, code, type):
+    def __init__(self, _id, name, code, _type):
         """
 
         :param _id: 
@@ -338,7 +341,7 @@ class Place(EqualityMixin, BaseModel):
         self.id = _id
         self.name = name
         self.code = code
-        self.type = type
+        self.type = _type
 
     def __repr__(self):
         return '<Place id: {0} name: {1}>'.format(self.id, self.name)
@@ -402,6 +405,11 @@ class Currency(BaseModel):
         return self.code != other.code
 
     def init(self, **kwargs):
+        """
+        Initializes attributes for object
+        :param kwargs: 
+        :return: 
+        """
         self.code = kwargs.get('Code')
         self.symbol = kwargs.get('Symbol')
         self.space_between_amount_and_symbol = kwargs.get('SpaceBetweenAmountAndSymbol')
@@ -450,6 +458,11 @@ class Agent(BaseModel):
         return '<Agent name: {0} type: {1}>'.format(self.name, self.type)
 
     def init(self, **kwargs):
+        """
+        Initializes attributes for object
+        :param kwargs: 
+        :return: 
+        """
         self.id = kwargs.get('Id')
         self.name = kwargs.get('Name')
         self.image_url = kwargs.get('ImageUrl')
