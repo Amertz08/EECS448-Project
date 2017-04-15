@@ -2,6 +2,8 @@ from __future__ import unicode_literals, print_function, division, absolute_impo
 
 import datetime
 
+import arrow
+
 from skywrapper.enums import Direction
 from skywrapper.helpers import format_datetime
 
@@ -80,7 +82,9 @@ class QueryResults(BaseModel):
             'carriers': results['Carriers']
         }
         outbound_leg = None
+        outbound_times = {}
         inbound_leg = None
+        inbound_times = {}
         for l in legs:
             for i in itineraries:
                 if i['OutboundLegId'] == l['Id']:
@@ -95,6 +99,8 @@ class QueryResults(BaseModel):
                             segment for segment in self._parse_segments_generator(filtered_segments, relevant_data)
                         ]
                     )
+                    outbound_times['departure'] = l['Departure']
+                    outbound_times['arrival'] = l['Arrival']
                     if inbound_leg is not None:
                         break
                 elif i['InboundLegId'] == l['Id']:
@@ -109,11 +115,13 @@ class QueryResults(BaseModel):
                             segment for segment in self._parse_segments_generator(filtered_segments, relevant_data)
                         ]
                     )
+                    inbound_times['departure'] = l['Departure']
+                    inbound_times['arrival'] = l['Arrival']
                     if outbound_leg is not None:
                         break
             yield Result(
-                departure_time=l['Departure'],
-                arrival_time=l['Arrival'],
+                outbound_times=outbound_times,
+                inbound_times=inbound_times,
                 outbound_leg=outbound_leg,
                 inbound_leg=inbound_leg
             )
@@ -230,20 +238,36 @@ class Query(BaseModel):
 
 
 class Result(EqualityMixin, BaseModel):
-    def __init__(self, departure_time, arrival_time, outbound_leg, inbound_leg=None):
+    def __init__(self, outbound_times, outbound_leg, inbound_times, inbound_leg=None):
         """
         
         :param departure_time: 
         :param arrival_time: 
         :param legs: 
         """
-        self.departure_time = departure_time
-        self.arrival_time = arrival_time
+        self.outbound_times = outbound_times
         self.outbound_leg = outbound_leg
+        self.inbound_times = inbound_times
         self.inbound_leg = inbound_leg
+        self.outbound_duration = self._calc_duration(outbound_times)
+        self.inbound_duration = self._calc_duration(inbound_times) if inbound_times else 0
+        self.price = 0.00
 
     def __repr__(self):
-        return '<Result departure_time: {0} arrival_time: {1} >'.format(self.departure_time, self.arrival_time)
+        return '<Result>'
+
+    @staticmethod
+    def _calc_duration(times):
+        """
+        
+        :param times: 
+        :return: 
+        """
+        if times is not None:
+            start = arrow.get(times['departure'])
+            end = arrow.get(times['arrival'])
+            return int((end - start).seconds / 60)
+        return None
 
 
 class Leg(EqualityMixin, BaseModel):
@@ -284,16 +308,6 @@ class Segment(EqualityMixin, BaseModel):
 
     def __repr__(self):
         return '<Segment id: {0} flight_number: {1}>'.format(self.id, self.flight.id)
-
-    @property
-    def duration_to_string(self):
-        """
-        
-        :return: 
-        """
-        hrs = int(self.duration / 60)
-        mins = int(self.duration % 60)
-        return '{0} hrs and {1} mins'.format(hrs, mins)
 
 
 class Place(EqualityMixin, BaseModel):

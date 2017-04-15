@@ -5,7 +5,7 @@ import arrow
 from flask import Blueprint, render_template
 
 from forms import SearchForm
-from skyAPI import live_flights
+from sky import live_flights
 
 main = Blueprint('main', __name__)
 
@@ -13,7 +13,7 @@ main = Blueprint('main', __name__)
 @main.route('/', methods=['GET', 'POST'])
 def index():
     form = SearchForm()
-    results = None
+    query_results = None
     if form.validate_on_submit():
         kwargs = {
             'originplace': form.origin_place_id.data,
@@ -24,11 +24,10 @@ def index():
             'children': form.children.data,
             'infants': form.infants.data,
         }
-        results = live_flights.query_flights(kwargs)
-        print(results.serialize)
+        query_results = live_flights.query_flights(kwargs)
 
     context = {
         'form': form,
-        'results': results
+        'results': query_results.results if query_results else query_results
     }
     return render_template('index.html', **context)

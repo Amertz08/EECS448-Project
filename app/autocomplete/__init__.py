@@ -2,7 +2,7 @@ from __future__ import unicode_literals, print_function, division, absolute_impo
 
 from flask import Blueprint, request, jsonify
 
-from skyAPI import live_flights
+from sky import live_flights
 
 auto = Blueprint('auto', __name__)
 
