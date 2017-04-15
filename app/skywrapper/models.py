@@ -410,3 +410,24 @@ class Currency(BaseModel):
 
     def __ne__(self, other):
         return self.code != other.code
+
+
+class PriceOption(BaseModel):
+    def __init__(self, age, price, url, agents=None):
+        """
+        
+        :param age: 
+        :param price: 
+        :param url: 
+        :param agents: 
+        """
+        self.age = age
+        self.price = price
+        self.url = url
+        if agents:  # TODO: will a price option ever have more than 1 agent?
+            self.agents = agents
+        else:
+            self.agents = []
+
+    def __repr__(self):
+        return '<PriceOption {}>'.format(self.price)
