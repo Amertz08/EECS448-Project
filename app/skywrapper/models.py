@@ -77,7 +77,7 @@ class QueryResults(BaseModel):
         segments = results['Segments']
         relevant_data = {
             'places': results['Places'],
-            'carriers': results['carriers']
+            'carriers': results['Carriers']
         }
         outbound_leg = None
         inbound_leg = None
@@ -114,7 +114,8 @@ class QueryResults(BaseModel):
             yield Result(
                 departure_time=l['Departure'],
                 arrival_time=l['Arrival'],
-                legs=[outbound_leg, inbound_leg]
+                outbound_leg=outbound_leg,
+                inbound_leg=inbound_leg
             )
 
     @staticmethod
@@ -229,7 +230,7 @@ class Query(BaseModel):
 
 
 class Result(EqualityMixin, BaseModel):
-    def __init__(self, departure_time, arrival_time, legs=None):
+    def __init__(self, departure_time, arrival_time, outbound_leg, inbound_leg=None):
         """
         
         :param departure_time: 
@@ -238,8 +239,8 @@ class Result(EqualityMixin, BaseModel):
         """
         self.departure_time = departure_time
         self.arrival_time = arrival_time
-        if not legs:
-            self.legs = []
+        self.outbound_leg = outbound_leg
+        self.inbound_leg = inbound_leg
 
     def __repr__(self):
         return '<Result departure_time: {0} arrival_time: {1} >'.format(self.departure_time, self.arrival_time)
