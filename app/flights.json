@@ -57,10 +57,10 @@
       "OriginStation": 13927, // Place id
       "FlightNumber": "683",
       "Directionality": "Outbound",
-      "ArrivalDateTime": "2017-04-17T08:49:00",
+      "ArrivalDateTime": "2017-04-17T08:49:00", // Segment arrival time same as leg arrival time for last segment
       "Carrier": 851, // carrier id
       "Duration": 224, // mins
-      "DepartureDateTime": "2017-04-17T07:05:00",
+      "DepartureDateTime": "2017-04-17T07:05:00", // Segment departure time same as leg departure time for first segment
       "Id": 0,
       "JourneyMode": "Flight",
       "OperatingCarrier": 851 // carrier id
