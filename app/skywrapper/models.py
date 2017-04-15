@@ -1,35 +1,9 @@
 from __future__ import unicode_literals, print_function, division, absolute_import
 
 import datetime
-from enum import Enum
 
-import arrow
-
-from skyscanner.skyscanner import Flights
-
-
-def format_datetime(time, is_datetime=True):
-    if is_datetime:
-        return arrow.get(time).datetime
-    else:
-        return arrow.get(time).date()
-
-
-class Direction(Enum):
-    inbound = 'Inbound'
-    outbound = 'Outbound'
-
-
-class LiveFlights(Flights):
-    def query_flights(self, params):
-        """
-
-        :param params: 
-        :return: 
-        """
-        query = Query(**params)
-        response = self.get_result(**query.serialize)
-        return QueryResults(query, response)
+from skywrapper.enums import Direction
+from skywrapper.helpers import format_datetime
 
 
 class EqualityMixin(object):
@@ -195,7 +169,7 @@ class QueryResults(BaseModel):
                     if origin is not None:
                         break
             flight = Flight(
-                number=segment['flight_number'],
+                _id=segment['flight_number'],
                 carrier=self._build_carrier(segment['carrier_id'], carriers)
             )
             segment = Segment(
@@ -312,6 +286,10 @@ class Segment(EqualityMixin, BaseModel):
 
     @property
     def duration_to_string(self):
+        """
+        
+        :return: 
+        """
         hrs = int(self.duration / 60)
         mins = int(self.duration % 60)
         return '{0} hrs and {1} mins'.format(hrs, mins)
@@ -356,15 +334,15 @@ class Carrier(EqualityMixin, BaseModel):
 
 
 class Flight(EqualityMixin, BaseModel):
-    def __init__(self, number, carrier):
+    def __init__(self, _id, carrier):
         """
 
         :param number: 
         :param carrier: 
         """
-        self.number = number
+        self.id = _id
         self.carrier = carrier
 
     def __repr__(self):
-        return '<Flight id: {0} carrier: {1}>'.format(self.number, self.carrier)
+        return '<Flight id: {0} carrier: {1}>'.format(self.id, self.carrier)
 
