@@ -212,14 +212,25 @@ class QueryResults(BaseModel):
 
 
 class Query(BaseModel):
+    originplace = None
+    destinationplace = None
+    outbounddate = None
+    inbounddate = None
+    adults = None
+    children = None
+    infants = None
+    country = None
+    currency = None
+    locale = None
+
     def __init__(self, **kwargs):
         if kwargs:
-            self.set_query(**kwargs)
+            self.init(**kwargs)
 
     def __repr__(self):
         return '<Query origin: {0} destination: {1}>'.format(self.originplace, self.destinationplace)
 
-    def set_query(self, **kwargs):
+    def init(self, **kwargs):
         """
 
         :param kwargs: 
@@ -352,7 +363,7 @@ class Flight(EqualityMixin, BaseModel):
     def __init__(self, _id, carrier):
         """
 
-        :param number: 
+        :param _id: 
         :param carrier: 
         """
         self.id = _id
@@ -361,3 +372,33 @@ class Flight(EqualityMixin, BaseModel):
     def __repr__(self):
         return '<Flight id: {0} carrier: {1}>'.format(self.id, self.carrier)
 
+
+class Currency(BaseModel):
+    code = None
+    symbol = None
+    space_between_amount_and_symbol = None
+    symbol_on_left = True
+    decimal_separator = None
+    thousands_separator = None
+    rounding_coefficient = 0
+    decimal_digits = 0
+
+    def __init__(self, **kwargs):
+        if kwargs:
+            self.init(**kwargs)
+
+    def init(self, **kwargs):
+        self.code = kwargs.get('SpaceBetweenAmountAndSymbol')
+        self.symbol = kwargs.get('Symbol')
+        self.space_between_amount_and_symbol = kwargs.get('SpaceBetweenAmountAndSymbol')
+        self.symbol_on_left = kwargs.get('SymbolOnLeft')
+        self.decimal_separator = kwargs.get('DecimalSeparator')
+        self.thousands_separator = kwargs.get('ThousandsSeparator')
+        self.rounding_coefficient = kwargs.get('RoundingCoefficent')
+        self.decimal_digits = kwargs.get('DecimalDigitis')
+
+    def __eq__(self, other):
+        return self.code == other.code
+
+    def __ne__(self, other):
+        return self.code != other.code
