@@ -5,7 +5,7 @@ import arrow
 from flask import Blueprint, render_template
 
 from forms import SearchForm
-from skyAPI import flight_service, live_flights
+from skyAPI import live_flights
 
 main = Blueprint('main', __name__)
 
