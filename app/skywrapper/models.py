@@ -26,6 +26,16 @@ class LiveFlights(Flights):
         return QueryResults(query, response)
 
 
+class EqualityMixin(object):
+    id = None
+
+    def __eq__(self, other):
+        return self.id == other.id
+
+    def __ne__(self, other):
+        return self.id != other.id
+
+
 class BaseModel(object):
     @property
     def serialize(self):
@@ -148,7 +158,7 @@ class Query(BaseModel):
         self.locale = kwargs.get('locale') if kwargs.get('locale') else 'en-US'
 
 
-class Result(BaseModel):
+class Result(EqualityMixin, BaseModel):
     def __init__(self, _id, departure_time, arrival_time, segments, relevant_data):
         """
 
@@ -164,6 +174,12 @@ class Result(BaseModel):
 
     def __repr__(self):
         return '<Result id: {0}>'.format(self.id)
+
+    def __eq__(self, other):
+        return self.id == other.id
+
+    def __ne__(self, other):
+        return self.id != other.id
 
     def _parse_segments(self, segments, relevant_data):
         """
@@ -240,7 +256,7 @@ class Result(BaseModel):
                 )
 
 
-class Segment(BaseModel):
+class Segment(EqualityMixin, BaseModel):
     def __init__(self, _id, origin, destination, departure_time,
                  arrival_time, duration, flight, directionality):
         """
@@ -273,7 +289,7 @@ class Segment(BaseModel):
         return '{0} hrs and {1} mins'.format(hrs, mins)
 
 
-class Place(BaseModel):
+class Place(EqualityMixin, BaseModel):
     def __init__(self, _id, name, code, type):
         """
 
@@ -291,7 +307,7 @@ class Place(BaseModel):
         return '<Place id: {0} name: {1}>'.format(self.id, self.name)
 
 
-class Carrier(BaseModel):
+class Carrier(EqualityMixin, BaseModel):
     def __init__(self, _id, name, code, display_code, image_url):
         """
 
@@ -311,7 +327,7 @@ class Carrier(BaseModel):
         return '<Carrier id: {0} name: {1}>'.format(self.id, self.name)
 
 
-class Flight(BaseModel):
+class Flight(EqualityMixin, BaseModel):
     def __init__(self, number, carrier):
         """
 
