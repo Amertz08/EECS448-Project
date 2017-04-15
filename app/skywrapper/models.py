@@ -282,7 +282,7 @@ class Segment(EqualityMixin, BaseModel):
         self.flight = flight
 
     def __repr__(self):
-        return '<Segment id: {0} flight_number: {1}>'.format(self.id, self.flight.number)
+        return '<Segment id: {0} flight_number: {1}>'.format(self.id, self.flight.id)
 
     @property
     def duration_to_string(self):
