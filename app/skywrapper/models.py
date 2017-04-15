@@ -55,6 +55,10 @@ class QueryResults(BaseModel):
     def __repr__(self):
         return '<QueryResults status: {}>'.format(self.status)
 
+    def __iter__(self):
+        for result in self.results:
+            yield result
+
     def _parse_response(self, response):
         """
 

@@ -28,6 +28,6 @@ def index():
 
     context = {
         'form': form,
-        'results': query_results.results if query_results else query_results
+        'results': query_results
     }
     return render_template('index.html', **context)
