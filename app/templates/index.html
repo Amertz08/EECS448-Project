@@ -39,11 +39,11 @@
                     <tr>
                         <td>Departure time: {{ segment.departure_time | format_datetime }}</td>
                         <td>Arrival time: {{ segment.arrival_time | format_datetime }}</td>
-                        <td>Carrier: {{ segment.flight.carrier.name }}</td>
+                        <td>Duration: {{ segment.duration | format_duration }}</td>
                     </tr>
                     <tr>
                         <td colspan="2"></td>
-                        <td>{{ segment.duration | format_duration }}</td>
+                        <td>{{ segment.flight.carrier.image_url | logo | safe }}</td>
                     </tr>
                     </table>
                 {% endfor %}

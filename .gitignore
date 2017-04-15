@@ -142,4 +142,4 @@ fabric.properties
 local_config.py
 .sass-cache
 JSON
-JSON.map
+*.map

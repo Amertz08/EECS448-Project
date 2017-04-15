@@ -34,14 +34,17 @@ def create_app(config_level):
 
     @app.add_template_filter
     def format_duration(minutes):
-        time = arrow.get(minutes=minutes)
-        hours = time.format('h')
-        minutes = time.format('mm')
+        hours = int(minutes / 60)
+        minutes = int(minutes % 60)
         return '{0} hrs and {1} mins'.format(hours, minutes)
 
     @app.add_template_filter
     def format_usd(val):
         return '${0}'.format(val)
+
+    @app.add_template_filter
+    def logo(url):
+        return '<img class="airline-logo" src="{}">'.format(url)
 
     # Blueprints
     from main import main
