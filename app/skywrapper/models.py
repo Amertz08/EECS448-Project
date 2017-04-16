@@ -441,7 +441,7 @@ class PriceOption(BaseModel):
         return '<PriceOption {}>'.format(self.price)
 
 
-class Agent(BaseModel):
+class Agent(EqualityMixin, BaseModel):
     id = None
     name = None
     image_url = None
