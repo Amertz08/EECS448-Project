@@ -171,7 +171,7 @@ class QueryResults(BaseModel):
                         _id=place['Id'],
                         name=place['Name'],
                         code=place['Code'],
-                        type=place['Type']
+                        _type=place['Type']
                     )
                     if destination is not None:
                         break
@@ -180,7 +180,7 @@ class QueryResults(BaseModel):
                         _id=place['Id'],
                         name=place['Name'],
                         code=place['Code'],
-                        type=place['Type']
+                        _type=place['Type']
                     )
                     if origin is not None:
                         break
