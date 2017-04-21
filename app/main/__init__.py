@@ -4,7 +4,7 @@ import arrow
 
 from flask import Blueprint, render_template
 
-from forms import SearchForm
+from forms import FlightSearchForm
 from sky import live_flights
 
 main = Blueprint('main', __name__)
@@ -12,7 +12,7 @@ main = Blueprint('main', __name__)
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    form = SearchForm()
+    form = FlightSearchForm()
     query_results = None
     if form.validate_on_submit():
         kwargs = {

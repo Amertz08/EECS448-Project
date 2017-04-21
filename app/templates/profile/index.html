@@ -1,35 +1,68 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}Profile{% endblock %}
 
 {% block page_content %}
     <div class="container col-md-6 col-md-offset-3">
-    <h1>Profile <small><a href="{{ url_for('profile.edit') }}">Edit</a></small></h1>
-    <table class="table table-bordered">
-        <tr>
-            <td>First Name</td>
-            <td>{{ current_user.first_name }}</td>
-        </tr>
-        <tr>
-            <td>Last Name</td>
-            <td>{{ current_user.last_name }}</td>
-        </tr>
-        <tr>
-            <td>Email</td>
-            <td>{{ current_user.email }}</td>
-        </tr>
-        <tr>
-            <td>City</td>
-            <td>{{ current_user.city }}</td>
-        </tr>
-        <tr>
-            <td>State</td>
-            <td>{{ current_user.state }}</td>
-        </tr>
-        <tr>
-            <td>Zip Code</td>
-            <td>{{ current_user.zip_code }}</td>
-        </tr>
-    </table>
+        <div class="row">
+            <h1>Profile <small><a href="{{ url_for('profile.edit') }}">Edit</a></small></h1>
+            <table class="table table-bordered">
+                <tr>
+                    <td>First Name</td>
+                    <td>{{ current_user.first_name }}</td>
+                </tr>
+                <tr>
+                    <td>Last Name</td>
+                    <td>{{ current_user.last_name }}</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>{{ current_user.email }}</td>
+                </tr>
+                <tr>
+                    <td>City</td>
+                    <td>{{ current_user.city }}</td>
+                </tr>
+                <tr>
+                    <td>State</td>
+                    <td>{{ current_user.state }}</td>
+                </tr>
+                <tr>
+                    <td>Zip Code</td>
+                    <td>{{ current_user.zip_code }}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="row">
+            <h2>Favorite Places</h2>
+        </div>
+        <div class="row">
+            {{ wtf.quick_form(form) }}
+        </div>
+        {% if places %}
+            <table class="table">
+            <thead>
+            <tr>
+                <th>City</th>
+                <th>Country</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for place in places %}
+            <tr>
+                <td>{{ place.city }}</td>
+                <td>{{ place.country }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+        {% else %}
+        <p>Add a favorite destination</p>
+        {% endif %}
     </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/profile-place-search.js') }}" type="text/javascript"></script>
 {% endblock %}

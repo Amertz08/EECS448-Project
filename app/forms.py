@@ -35,7 +35,7 @@ class EditProfileForm(Form):
     submit = SubmitField('Update')
 
 
-class SearchForm(Form):
+class FlightSearchForm(Form):
     origin = StringField('Origin', validators=[Required()])
     destination = StringField('Destination', validators=[Required()])
     destination_place_id = HiddenField('destination_place_id')
@@ -46,3 +46,12 @@ class SearchForm(Form):
     children = SelectField('Children (1-16)', choices=[(n, n) for n in range(9)], coerce=int)
     infants = SelectField('Infants (under 12 months)', choices=[(n, n) for n in range(9)], coerce=int)
     submit = SubmitField('Search')
+
+
+class PlaceSearchForm(Form):
+    destination = StringField('Destination', validators=[Required()])
+    destination_place_id = HiddenField('destination_place_id')
+    city = HiddenField('city')
+    country = HiddenField('country')
+    submit = SubmitField('Add')
+

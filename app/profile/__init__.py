@@ -1,18 +1,38 @@
 from __future__ import unicode_literals, print_function, division, absolute_import
 
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 
-from forms import EditProfileForm
-from models import db, commit, User
+from forms import EditProfileForm, PlaceSearchForm
+from models import db, commit, User, FavoritePlace
 
 profile = Blueprint('profile', __name__)
 
 
-@profile.route('/')
+@profile.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
-    return render_template('profile/index.html')
+    form = PlaceSearchForm()
+    places = FavoritePlace.query.filter_by(user_id=current_user.id).all()
+    if form.validate_on_submit():
+        place = FavoritePlace(
+            user_id=current_user.id,
+            city=form.city.data,
+            country=form.country.data,
+            place_id=form.destination_place_id.data
+        )
+        if place in places:
+            flash('You already saved that destination to your favorite places')
+        else:
+            db.session.add(place)
+            commit(db.session)
+            places = FavoritePlace.query.filter_by(user_id=current_user.id).all()
+
+    context = {
+        'form': form,
+        'places': places
+    }
+    return render_template('profile/index.html', **context)
 
 
 @profile.route('/edit', methods=['GET', 'POST'])
