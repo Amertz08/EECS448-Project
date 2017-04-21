@@ -48,6 +48,7 @@ def register():
             db.session.add(user)
             commit(db.session)
             flash('You are now registered')
+            login_user(user)
             return redirect(url_for('profile.index'))
         else:
             flash('Email is already registered')
