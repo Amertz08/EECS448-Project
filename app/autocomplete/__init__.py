@@ -13,7 +13,9 @@ def _search_data_gen(results):
             'label': '{city}, {country}'.format(city=result['PlaceName'], country=result['CountryName']),
             'value': '{city}, {country}'.format(city=result['PlaceName'], country=result['CountryName']),
             'data': {
-                'place_id': result['PlaceId']
+                'place_id': result['PlaceId'],
+                'city': result['PlaceName'],
+                'country': result['CountryName']
             }
         }
 

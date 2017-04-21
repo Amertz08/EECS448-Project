@@ -55,5 +55,5 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<script src="static/js/homepage.js" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='js/homepage.js') }}" type="text/javascript"></script>
 {% endblock %}

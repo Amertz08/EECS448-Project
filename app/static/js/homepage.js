@@ -4,14 +4,14 @@ function getPlaceID(field) {
 
     $(inputField).autocomplete({
         source: function (request, response) {
-           $.get('/autocomplete/search', {
-               destination: request.term
-           }, function (data) {
-               response(data);
-           });
+            $.get('/autocomplete/search', {
+                destination: request.term
+            }, function (data) {
+                response(data);
+            });
        },
        select: function (event, ui) {
-           $(hiddenField).val(ui.item.data.place_id)
+            $(hiddenField).val(ui.item.data.place_id)
        }
     })
 }
