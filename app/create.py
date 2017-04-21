@@ -1,5 +1,6 @@
 from __future__ import unicode_literals, print_function, division, absolute_import
 
+import arrow
 from flask import Flask
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
@@ -26,6 +27,24 @@ def create_app(config_level):
     db.init_app(app)
     login_manager.init_app(app)
     migrate = Migrate(app, db)
+
+    @app.template_filter('datetime')
+    def format_datetime(date):
+        return arrow.get(date).format('YYYY-MM-DD hh:mm:ss a')
+
+    @app.template_filter('duration')
+    def format_duration(minutes):
+        hours = int(minutes / 60)
+        minutes = int(minutes % 60)
+        return '{0} hrs and {1} mins'.format(hours, minutes)
+
+    @app.template_filter('USD')
+    def format_usd(val):
+        return '${0}'.format(val)
+
+    @app.template_filter('logo')
+    def logo(url):
+        return '<img class="airline-logo" src="{}">'.format(url)
 
     # Blueprints
     from main import main

@@ -2,7 +2,7 @@ from __future__ import unicode_literals, print_function, division, absolute_impo
 
 from flask import Blueprint, request, jsonify
 
-from skyAPI import flight_service
+from sky import live_flights
 
 auto = Blueprint('auto', __name__)
 
@@ -30,7 +30,7 @@ def search():
             'locale': 'en-US',
             'query': destination
         }
-        response = flight_service.location_autosuggest(**kwargs)
+        response = live_flights.location_autosuggest(**kwargs)
         places = response.json()['Places']
         results = [place for place in _search_data_gen(places)]
     return jsonify(results)

@@ -11,7 +11,46 @@
         </div>
     </div>
     {% if results %}
-    do something
+        <div class="row">
+        {% for result in results %}
+            <div class="row">
+            <table class="table">
+                <tr>
+                    <th colspan="4">Outbound flight</th>
+                </tr>
+                <tr>
+                    <td>Departure time: {{ result.outbound_times.departure | datetime }}</td>
+                    <td>Arrival time: {{ result.outbound_times.arrival | datetime }}</td>
+                    <td>Duration: {{ result.outbound_duration | duration }}</td>
+                    <td>Price: {{ result.price | USD }}</td>
+                </tr>
+                {% for segment in result.outbound_leg.segments %}
+                    <table class="table">
+                    <tr>
+                        <th>Origin Airport</th>
+                        <th>Destination Airport</th>
+                        <th>Flight</th>
+                    </tr>
+                    <tr>
+                        <td>{{ segment.origin.code }} {{ segment.origin.name }}</td>
+                        <td>{{ segment.destination.code }} {{ segment.destination.name }}</td>
+                        <td>Number: {{ segment.flight.id }}</td>
+                    </tr>
+                    <tr>
+                        <td>Departure time: {{ segment.departure_time | datetime }}</td>
+                        <td>Arrival time: {{ segment.arrival_time | datetime }}</td>
+                        <td>Duration: {{ segment.duration | duration }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"></td>
+                        <td>{{ segment.flight.carrier.image_url | logo | safe }}</td>
+                    </tr>
+                    </table>
+                {% endfor %}
+            </table>
+            </div>
+        {% endfor %}
+        </div>
     {% endif %}
 {% endblock %}
 
