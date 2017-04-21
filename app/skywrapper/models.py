@@ -42,7 +42,7 @@ class BaseModel(object):
 
 
 class QueryResults(BaseModel):
-    currency = None  # TODO: will there ever be more than 1 currency?
+    currency = None
 
     def __init__(self, query, response):
         """
