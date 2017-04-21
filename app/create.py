@@ -28,21 +28,21 @@ def create_app(config_level):
     login_manager.init_app(app)
     migrate = Migrate(app, db)
 
-    @app.add_template_filter
+    @app.template_filter('datetime')
     def format_datetime(date):
         return arrow.get(date).format('YYYY-MM-DD hh:mm:ss a')
 
-    @app.add_template_filter
+    @app.template_filter('duration')
     def format_duration(minutes):
         hours = int(minutes / 60)
         minutes = int(minutes % 60)
         return '{0} hrs and {1} mins'.format(hours, minutes)
 
-    @app.add_template_filter
+    @app.template_filter('USD')
     def format_usd(val):
         return '${0}'.format(val)
 
-    @app.add_template_filter
+    @app.template_filter('logo')
     def logo(url):
         return '<img class="airline-logo" src="{}">'.format(url)
 

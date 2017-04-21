@@ -19,10 +19,10 @@
                     <th colspan="4">Outbound flight</th>
                 </tr>
                 <tr>
-                    <td>Departure time: {{ result.outbound_times.departure | format_datetime }}</td>
-                    <td>Arrival time: {{ result.outbound_times.arrival | format_datetime }}</td>
-                    <td>Duration: {{ result.outbound_duration | format_duration }}</td>
-                    <td>Price: {{ result.price | format_usd }}</td>
+                    <td>Departure time: {{ result.outbound_times.departure | datetime }}</td>
+                    <td>Arrival time: {{ result.outbound_times.arrival | datetime }}</td>
+                    <td>Duration: {{ result.outbound_duration | duration }}</td>
+                    <td>Price: {{ result.price | USD }}</td>
                 </tr>
                 {% for segment in result.outbound_leg.segments %}
                     <table class="table">
@@ -37,9 +37,9 @@
                         <td>Number: {{ segment.flight.id }}</td>
                     </tr>
                     <tr>
-                        <td>Departure time: {{ segment.departure_time | format_datetime }}</td>
-                        <td>Arrival time: {{ segment.arrival_time | format_datetime }}</td>
-                        <td>Duration: {{ segment.duration | format_duration }}</td>
+                        <td>Departure time: {{ segment.departure_time | datetime }}</td>
+                        <td>Arrival time: {{ segment.arrival_time | datetime }}</td>
+                        <td>Duration: {{ segment.duration | duration }}</td>
                     </tr>
                     <tr>
                         <td colspan="2"></td>
