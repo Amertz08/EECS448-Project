@@ -1,6 +1,6 @@
 from __future__ import unicode_literals, print_function, division, absolute_import
 
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, Markup
 from flask_login import login_required, current_user
 
 from forms import EditProfileForm, PlaceSearchForm
@@ -32,6 +32,12 @@ def index():
         'form': form,
         'places': places
     }
+    if not current_user.validated:
+        url = 'Click <a href="{}" class="alert-link">here</a> to resend confirmation email'.format(
+            url_for('auth.resend_confirmation')
+        )
+        msg = Markup('Your email has not been confirmed. {}'.format(url))
+        flash(msg)
     return render_template('profile/index.html', **context)
 
 

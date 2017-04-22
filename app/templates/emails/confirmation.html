@@ -1,0 +1,6 @@
+<div>
+    <h1>Hello {{ first_name }} {{ last_name }}</h1>
+    <p>
+        Click the following <a href="{{ url_for('auth.confirm', token=token) }}" target="_blank">here</a> to confirm your email.
+    </p>
+</div>
