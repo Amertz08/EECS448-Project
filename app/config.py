@@ -20,8 +20,8 @@ class Config(object):
 
     CELERY_BROKER_URL = 'redis://localhost:6379/0'
 
-    MAIL_SERVER = 'smtp.googlemail.com'
-    MAIL_PORT = 587
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 465
     MAIL_USE_TLS = True
     MAIL_DEFAULT_SENDER = 'no-reply@example.com'
     MAIL_USER = SMTP_USER
