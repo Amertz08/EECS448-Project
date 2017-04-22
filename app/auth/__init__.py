@@ -38,33 +38,29 @@ def logout():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user is None:
-            user = User(
-                first_name=form.first_name.data,
-                last_name=form.last_name.data,
-                email=form.email.data,
-                password=form.password.data
-            )
-            db.session.add(user)
-            commit(db.session)
-            flash('You are now registered.')
-            context = {
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'token': user.generate_confirmation_token()
-            }
-            send_email(
-                recipients=[user.email],
-                subject='Confirm your email address',
-                template_name='confirmation',
-                context=context
-            )
-            flash('We sent you a verification email.')
-            login_user(user)
-            return redirect(url_for('profile.index'))
-        else:
-            flash('Email is already registered')
+        user = User(
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
+            email=form.email.data,
+            password=form.password.data
+        )
+        db.session.add(user)
+        commit(db.session)
+        flash('You are now registered.')
+        context = {
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'token': user.generate_confirmation_token()
+        }
+        send_email(
+            recipients=[user.email],
+            subject='Confirm your email address',
+            template_name='confirmation',
+            context=context
+        )
+        flash('We sent you a verification email.')
+        login_user(user)
+        return redirect(url_for('profile.index'))
     return render_template('auth/register.html', form=form)
 
 

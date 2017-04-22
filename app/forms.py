@@ -2,9 +2,11 @@ from __future__ import unicode_literals, print_function, division, absolute_impo
 
 from flask_wtf import Form
 from wtforms import StringField, PasswordField, SubmitField, \
-    BooleanField, IntegerField, HiddenField, SelectField
+    BooleanField, IntegerField, HiddenField, SelectField, ValidationError
 from wtforms.fields.html5 import DateField
 from wtforms.validators import Required, Length, Email, EqualTo
+
+from models import User
 
 
 class LoginForm(Form):
@@ -21,6 +23,10 @@ class RegistrationForm(Form):
     password = PasswordField('Password', validators=[Required(), EqualTo('confirm', 'Passwords must match')])
     confirm = PasswordField('Repeat Password', validators=[Required()])
     submit = SubmitField('Register')
+
+    def validate_email(self, field):
+        if User.query.filter_by(email=field.data).first():
+            raise ValidationError('Email is already registered')
 
 
 class EditProfileForm(Form):
