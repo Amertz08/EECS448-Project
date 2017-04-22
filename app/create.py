@@ -53,13 +53,13 @@ def create_app(config_level):
         return '<img class="airline-logo" src="{}">'.format(url)
 
     # Blueprints
-    from main import main
+    from main.routes import main
     app.register_blueprint(main)
-    from auth import auth
+    from auth.routes import auth
     app.register_blueprint(auth, url_prefix='/auth')
-    from profile import profile
+    from profile.routes import profile
     app.register_blueprint(profile, url_prefix='/profile')
-    from autocomplete import auto
+    from autocomplete.routes import auto
     app.register_blueprint(auto, url_prefix='/autocomplete')
 
     return app
