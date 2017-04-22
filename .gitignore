@@ -143,3 +143,4 @@ local_config.py
 .sass-cache
 JSON
 *.map
+*.rdb

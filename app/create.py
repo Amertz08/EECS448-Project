@@ -1,17 +1,21 @@
 from __future__ import unicode_literals, print_function, division, absolute_import
 
 import arrow
+from celery import Celery
 from flask import Flask
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
+from flask_mail import Mail
 from flask_migrate import Migrate
 
-from config import config
+from config import config, Config
 from models import db, User
 
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
+mail = Mail()
+celery = Celery(__name__, broker=Config.CELERY_BROKER_URL)
 
 
 @login_manager.user_loader
@@ -27,6 +31,8 @@ def create_app(config_level):
     db.init_app(app)
     login_manager.init_app(app)
     migrate = Migrate(app, db)
+    mail.init_app(app)
+    celery.conf.update(app.config)
 
     @app.template_filter('datetime')
     def format_datetime(date):

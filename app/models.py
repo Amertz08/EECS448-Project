@@ -2,6 +2,8 @@ from __future__ import unicode_literals, print_function, division, absolute_impo
 
 import datetime
 
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -34,6 +36,7 @@ class User(UserMixin, db.Model):
     state = db.Column(db.String(2), default='')
     zip_code = db.Column(db.Integer)
     email = db.Column(db.String(255), unique=True, default='')
+    validated = db.Column(db.Boolean, default=False)
     places = db.relationship('FavoritePlace')
 
     def __init__(self, first_name, last_name, email, password):
@@ -58,6 +61,22 @@ class User(UserMixin, db.Model):
 
     def update_password(self, password):
         self.password = self.hash_password(password)
+
+    def generate_confirmation_token(self, expiration=36000):
+        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'confirm': self.id})
+
+    def confirm(self, token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return False
+        if data.get('confirm') != self.id:
+            return False
+        self.validated = True
+        db.session.add(self)
+        return True
 
 
 class FavoritePlace(db.Model):
