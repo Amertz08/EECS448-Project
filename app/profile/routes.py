@@ -3,6 +3,7 @@ from __future__ import unicode_literals, print_function, division, absolute_impo
 from flask import Blueprint, render_template, redirect, url_for, flash, Markup
 from flask_login import login_required, current_user
 
+from helpers import send_error_email
 from forms import EditProfileForm, PlaceSearchForm
 from models import db, commit, User, FavoritePlace
 
@@ -14,6 +15,10 @@ profile = Blueprint('profile', __name__)
 def index():
     form = PlaceSearchForm()
     places = FavoritePlace.query.filter_by(user_id=current_user.id).all()
+    context = {
+        'form': form,
+        'places': places
+    }
     if form.validate_on_submit():
         place = FavoritePlace(
             user_id=current_user.id,
@@ -25,13 +30,14 @@ def index():
             flash('You already saved that destination to your favorite places')
         else:
             db.session.add(place)
-            commit(db.session)
-            places = FavoritePlace.query.filter_by(user_id=current_user.id).all()
+            try:
+                commit(db.session)
+            except:
+                send_error_email()
+                flash('There has been an error')
+                return render_template('profile/index.html', **context)
+            context['places'] = FavoritePlace.query.filter_by(user_id=current_user.id).all()
 
-    context = {
-        'form': form,
-        'places': places
-    }
     if not current_user.validated:
         url = 'Click <a href="{}" class="alert-link">here</a> to resend confirmation email'.format(
             url_for('auth.resend_confirmation')
@@ -55,7 +61,12 @@ def edit():
         user.zip_code = form.zip_code.data
         if form.password.data is not None:
             user.update_password(form.password.data)
-        commit(db.session)
+        try:
+            commit(db.session)
+        except:
+            send_error_email()
+            flash('There has been an error')
+            return render_template('profile/edit.html', form=form)
         return redirect(url_for('profile.index'))
 
     form.first_name.data = current_user.first_name

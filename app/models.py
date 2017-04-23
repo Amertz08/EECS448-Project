@@ -88,8 +88,10 @@ class FavoritePlace(db.Model):
     country = db.Column(db.String(32), default='')
     place_id = db.Column(db.String(32), default='')
 
-    def __init__(self, user_id, place_id=None):
+    def __init__(self, user_id, city=None, country=None, place_id=None):
         self.user_id = user_id
+        self.city = city
+        self.country = country
         self.place_id = place_id
 
     def __repr__(self):

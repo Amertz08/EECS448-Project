@@ -3,6 +3,7 @@ from __future__ import unicode_literals, print_function, division, absolute_impo
 from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_user, login_required, logout_user, current_user
 
+from helpers import send_error_email
 from forms import LoginForm, RegistrationForm
 from models import db, commit, User
 from mail import send_email
@@ -45,7 +46,13 @@ def register():
             password=form.password.data
         )
         db.session.add(user)
-        commit(db.session)
+        try:
+            commit(db.session)
+        except:
+            send_error_email()
+            flash('There has been an error')
+            return render_template('auth/register.html', form=form)
+
         flash('You are now registered.')
         context = {
             'first_name': user.first_name,
