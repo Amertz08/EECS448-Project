@@ -29,8 +29,8 @@ def commit(session):
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(255), default='')
-    last_name = db.Column(db.String(255), default='')
+    first_name = db.Column(db.String(255))
+    last_name = db.Column(db.String(255))
     password = db.Column(db.String(255))
     city = db.Column(db.String(32), default='')
     state = db.Column(db.String(2), default='')
@@ -88,6 +88,10 @@ class FavoritePlace(db.Model):
     country = db.Column(db.String(32), default='')
     place_id = db.Column(db.String(32), default='')
 
+    def __init__(self, user_id, place_id=None):
+        self.user_id = user_id
+        self.place_id = place_id
+
     def __repr__(self):
         return '<FavoritePlace city: {0} country: {1} place_id: {2}>'.format(
             self.city, self.country, self.place_id
@@ -99,4 +103,6 @@ class FavoritePlace(db.Model):
         return a & b
 
     def __ne__(self, other):
-        return self != other
+        a = self.user_id == other.user_id
+        b = self.place_id == other.place_id
+        return not (a & b)

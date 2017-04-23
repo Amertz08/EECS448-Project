@@ -5,7 +5,7 @@ import time
 from sqlalchemy.exc import IntegrityError
 
 from test.base import BaseTest
-from models import db, commit, User
+from models import db, commit, User, FavoritePlace
 
 
 class TestUserModel(BaseTest):
@@ -98,3 +98,47 @@ class TestUserModel(BaseTest):
         token = user.generate_confirmation_token(expiration=1)
         time.sleep(3)
         self.assertFalse(user.confirm(token), 'Token should of expired')
+
+
+class TestFavoritePlaceModel(BaseTest):
+
+    def test_default_attribute_values(self):
+        user = User(
+            first_name='Adam',
+            last_name='Mertz',
+            email='amertz@example.com',
+            password='pass'
+        )
+        db.session.add(user)
+        commit(db.session)
+
+        place = FavoritePlace(user_id=user.id)
+
+        db.session.add(place)
+        commit(db.session)
+
+        self.assertEqual(place.city, '', 'city should default to empty string')
+        self.assertEqual(place.country, '', 'country should default to empty string')
+        self.assertEqual(place.place_id, '', 'place_id should default to empty string')
+
+    def test_equality(self):
+        user = User(
+            first_name='Adam',
+            last_name='Mertz',
+            email='amertz@example.com',
+            password='pass'
+        )
+        db.session.add(user)
+        commit(db.session)
+
+        place_one = FavoritePlace(user_id=user.id)
+        db.session.add(place_one)
+        commit(db.session)
+
+        place_two = FavoritePlace.query.first()
+        self.assertEqual(place_one, place_two, '__eq__ does not work properly')
+
+        place_three = FavoritePlace(user_id=user.id, place_id='blah')
+        db.session.add(place_three)
+        commit(db.session)
+        self.assertNotEqual(place_one, place_three, '__ne__ does not work properly')
