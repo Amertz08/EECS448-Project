@@ -96,3 +96,14 @@ class TestRegistrationForm(BaseTest):
         )
 
         self.assertFalse(form.validate(), 'email should be validated as unique')
+
+    def test_passwords(self):
+        form = RegistrationForm(
+            first_name='Adam',
+            last_name='Mertz',
+            email='a@example.com',
+            password='pass',
+            confirm='not pass'
+        )
+
+        self.assertFalse(form.validate(), 'password and conform must be the same')
