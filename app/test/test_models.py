@@ -1,5 +1,6 @@
 from __future__ import unicode_literals, print_function, division, absolute_import
 
+import datetime
 import time
 
 from sqlalchemy.exc import IntegrityError
@@ -117,6 +118,8 @@ class TestFavoritePlaceModel(BaseTest):
         db.session.add(place)
         commit(db.session)
 
+        self.assertIsNotNone(place.added, 'added should have a value')
+        self.assertIsInstance(place.added, datetime.datetime, 'added should be datetime object')
         self.assertEqual(place.city, '', 'city should default to empty string')
         self.assertEqual(place.country, '', 'country should default to empty string')
         self.assertEqual(place.place_id, '', 'place_id should default to empty string')
