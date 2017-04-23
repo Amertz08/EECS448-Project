@@ -2,6 +2,8 @@ from __future__ import unicode_literals, print_function, division, absolute_impo
 
 import os
 
+from redis import Redis
+
 
 def test_app_config():
     assert os.getenv('APP_CONFIG') is not None, 'APP_CONFIG not set'
@@ -21,3 +23,14 @@ def test_mysql_user():
 
 def test_mysql_pass():
     assert os.getenv('MYSQL_PASS') is not None, 'MYSQL_PASS is not set'
+
+
+def test_redis_running():
+    red = Redis()
+    assert red.ping(), 'Redis is not running'
+
+
+def test_celery_worker_is_running():
+    from celery.task.control import inspect
+    insp = inspect()
+    assert insp.stats() is not None, 'Celery worker is not running'
