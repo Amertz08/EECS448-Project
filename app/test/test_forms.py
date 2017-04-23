@@ -21,7 +21,7 @@ class TestLoginForm(BaseTest):
 
     def test_email_length(self):
         domain = '@example.com'
-        email = ''.join('a' for x in range(64 - len(domain)))
+        email = ''.join('a' for x in range(65 - len(domain)))
         email += domain
         form = LoginForm(
             email=email,
@@ -107,3 +107,55 @@ class TestRegistrationForm(BaseTest):
         )
 
         self.assertFalse(form.validate(), 'password and conform must be the same')
+
+
+class TestEditProfileForm(BaseTest):
+
+    def test_first_name_required(self):
+        form = EditProfileForm(
+            last_name='blah',
+            email='a@example.com',
+        )
+        self.assertFalse(form.validate(), 'first_name must be required')
+
+    def test_last_name_required(self):
+        form = EditProfileForm(
+            first_name='adam',
+            email='a@example.com'
+        )
+        self.assertFalse(form.validate(), 'last_name must be required')
+
+    def test_email_required(self):
+        form = EditProfileForm(
+            first_name='Adam',
+            last_name='Mertz',
+        )
+        self.assertFalse(form.validate(), 'email should be required')
+
+    def test_email_validator(self):
+        form = EditProfileForm(
+            first_name='Adam',
+            last_name='Mertz',
+            email='blah'
+        )
+        self.assertFalse(form.validate(), 'email should validate it is in the form of an email address')
+
+    def test_passwords_equality_validator(self):
+        form = EditProfileForm(
+            first_name='Adam',
+            last_name='Mertz',
+            email='adam@example.com',
+            password='pass',
+            confirm='pass'
+        )
+        self.assertTrue(form.validate(), 'password/confirm must validate to be equal')
+
+        form = EditProfileForm(
+            first_name='Adam',
+            last_name='Mertz',
+            email='adam@example.com',
+            password='pass',
+            confirm='not pass'
+        )
+        self.assertFalse(form.validate(), 'password/confirm must be false when not equal')
+
