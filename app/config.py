@@ -48,6 +48,8 @@ class TestingConfig(Config):
     MYSQL_DB = 'EECS448_test'
     MYSQL_HOST = 'localhost'
 
+    WTF_CSRF_ENABLED = False
+
     # Database info
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{usr}:{passwd}@{host}/{db}'.format(
         usr=MYSQL_USER, passwd=MYSQL_PASS, host=MYSQL_HOST, db=MYSQL_DB
