@@ -2,11 +2,47 @@ from __future__ import unicode_literals, print_function, division, absolute_impo
 
 import time
 
+from sqlalchemy.exc import IntegrityError
+
 from test.base import BaseTest
 from models import db, commit, User
 
 
 class TestUserModel(BaseTest):
+
+    def test_default_values_for_attributes(self):
+        user = User(
+            first_name='Adam',
+            last_name='Mertz',
+            email='amertz@example.com',
+            password='pass'
+        )
+        db.session.add(user)
+        commit(db.session)
+
+        self.assertEqual(user.city, '', 'city should default to an empty string')
+        self.assertEqual(user.state, '', 'state should default to an empty string')
+        self.assertIsNone(user.zip_code, 'zip_code has no default')
+        self.assertFalse(user.validated, 'validated should default to False')
+
+    def test_email_uniqueness(self):
+        user_one = User(
+            first_name='Adam',
+            last_name='Mertz',
+            email='amertz@example.com',
+            password='pass'
+        )
+        user_two = User(
+            first_name='Steve',
+            last_name='McQueen',
+            email='amertz@example.com',
+            password='another pass'
+        )
+
+        db.session.add(user_one)
+        commit(db.session)
+        db.session.add(user_two)
+        self.assertRaises(IntegrityError, commit, db.session)
 
     def test_hash_password(self):
         user = User(
