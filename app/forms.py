@@ -36,7 +36,7 @@ class EditProfileForm(Form):
     password = PasswordField('Password', validators=[EqualTo('confirm', 'Passwords must match')])
     confirm = PasswordField('Repeat Password')
     city = StringField('City')
-    state = StringField('State', validators=[Length(1, 2)])
+    state = StringField('State')
     zip_code = IntegerField('Zip code')
     submit = SubmitField('Update')
 
