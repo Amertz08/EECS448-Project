@@ -8,6 +8,9 @@ from local_config import SMTP_USER, SMTP_PASSWORD
 class Config(object):
     SECRET_KEY = os.getenv('SECRET_KEY') or '))aos47#z9%t&fwx=jqcf+yo9&&7s&(+4@(gt9gl70i-_4mh*p'
 
+    CONFIG_LVL = 'default'
+    ADMIN_EMAIL = 'admin@example.com'
+
     MYSQL_USER = 'EECS448'
     MYSQL_PASS = 'z81mL2eJgK5y'
     MYSQL_DB = 'EECS448_dev'
@@ -34,9 +37,11 @@ class Config(object):
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    CONFIG_LVL = 'DEV'
 
 
 class TestingConfig(Config):
+    CONFIG_LVL = 'TESTING'
     TESTING = True
     MYSQL_USER = 'EECS448'
     MYSQL_PASS = 'z81mL2eJgK5y'
@@ -51,6 +56,7 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     PRODUCTION = True
+    CONFIG_LVL = 'PRODUCTION'
 
 
 config = {
