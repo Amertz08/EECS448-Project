@@ -61,3 +61,13 @@ class PlaceSearchForm(Form):
     country = HiddenField('country')
     submit = SubmitField('Add')
 
+
+class ForgotPasswordForm(Form):
+    email = StringField('Email', validators=[Email()])
+    submit = SubmitField('Send')
+
+
+class PasswordResetForm(Form):
+    password = PasswordField('Password', validators=[EqualTo('confirm', 'Passwords must match')])
+    confirm = PasswordField('Repeat Password')
+    submit = SubmitField('Submit')
