@@ -83,7 +83,12 @@ def confirm(token):
     if current_user.validated:
         return redirect(url_for('profile.index'))
     if current_user.confirm(token):
-        flash('Thank you for confirming your account.')
+        try:
+            commit(db.session)
+            flash('Thank you for confirming your account.')
+        except:
+            send_error_email()
+            flash('There has been a server error')
     else:
         flash('The confirmation link is invalid or has expired')
     return redirect(url_for('profile.index'))
