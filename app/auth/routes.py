@@ -1,14 +1,20 @@
 from __future__ import unicode_literals, print_function, division, absolute_import
 
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect,\
+    url_for, flash, current_app, abort
 from flask_login import login_user, login_required, logout_user, current_user
+from itsdangerous import URLSafeSerializer
 
 from helpers import send_error_email
-from forms import LoginForm, RegistrationForm
+from forms import LoginForm, RegistrationForm, ForgotPasswordForm, PasswordResetForm
 from models import db, commit, User
 from mail import send_email
 
 auth = Blueprint('auth', __name__)
+
+
+def get_url_serializer(app):
+    return URLSafeSerializer(app.config['SECRET_KEY'])
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -95,7 +101,55 @@ def resend_confirmation():
         recipients=[current_user.email],
         subject='Confirm your email address',
         template_name='confirmation',
-        context=context
+        **context
     )
     flash('A new confirmation email has been sent')
     return redirect(url_for('profile.index'))
+
+
+@auth.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    form = ForgotPasswordForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            s = get_url_serializer(current_app)
+            token = s.dumps(user.email, salt='recovery-key')
+            context = {
+                'first_name': user.first_name,
+                'token': token
+            }
+            send_email(
+                recipients=[user.email],
+                subject='Password Reset',
+                template_name='password_reset',
+                **context
+            )
+        flash('Email with link to reset password has been sent')
+        return redirect(url_for('auth.login'))
+    return render_template('auth/forgot_password.html', form=form)
+
+
+@auth.route('/reset/<token>', methods=['GET', 'POST'])
+def reset(token):
+    email = None
+    try:
+        s = get_url_serializer(current_app)
+        email = s.loads(token, salt='recovery-key')
+    except:
+        abort(404)
+
+    form = PasswordResetForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=email).first_or_404()
+        user.update_password(form.password.data)
+        try:
+            commit(db.session)
+        except:
+            send_error_email()
+            flash('There has been an error')
+            return redirect(url_for('auth.forgot_password'))
+        flash('Password updated')
+        return redirect(url_for('auth.login'))
+    return render_template('auth/reset.html', form=form)
