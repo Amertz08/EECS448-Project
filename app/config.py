@@ -27,7 +27,7 @@ class Config(object):
     MAIL_PORT = 465
     MAIL_USE_TLS = True
     MAIL_DEFAULT_SENDER = 'no-reply@example.com'
-    MAIL_USER = SMTP_USER
+    MAIL_USERNAME = SMTP_USER
     MAIL_PASSWORD = SMTP_PASSWORD
 
     @staticmethod
