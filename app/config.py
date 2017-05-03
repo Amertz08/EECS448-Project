@@ -2,7 +2,16 @@ from __future__ import unicode_literals, print_function, division, absolute_impo
 
 import os
 
-from local_config import SMTP_USER, SMTP_PASSWORD
+
+MAIL_USERNAME = None
+MAIL_PASSWORD = None
+# TODO: safer import
+try:
+    from local_config import SMTP_USER, SMTP_PASSWORD
+    MAIL_USERNAME = SMTP_USER
+    MAIL_PASSWORD = SMTP_PASSWORD
+except ImportError:
+    print('local_config.py does not exists')
 
 
 class Config(object):
@@ -27,8 +36,8 @@ class Config(object):
     MAIL_PORT = 465
     MAIL_USE_TLS = True
     MAIL_DEFAULT_SENDER = 'no-reply@example.com'
-    MAIL_USERNAME = SMTP_USER
-    MAIL_PASSWORD = SMTP_PASSWORD
+    MAIL_USERNAME = MAIL_USERNAME
+    MAIL_PASSWORD = MAIL_PASSWORD
 
     @staticmethod
     def init_app(app):
@@ -59,6 +68,15 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     PRODUCTION = True
     CONFIG_LVL = 'PRODUCTION'
+    MYSQL_USER = 'tickets'
+    MYSQL_PASS = 'pass'
+    MYSQL_DB = 'tickets'
+    MYSQL_HOST = 'localhost'
+
+    # Database info
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{usr}:{passwd}@{host}/{db}'.format(
+        usr=MYSQL_USER, passwd=MYSQL_PASS, host=MYSQL_HOST, db=MYSQL_DB
+    )
 
 
 config = {

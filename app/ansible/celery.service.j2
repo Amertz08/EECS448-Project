@@ -1,0 +1,12 @@
+[Unit]
+Description=Celery instance for {{ APP_NAME }}
+After=network.target
+
+[Service]
+User=uwsgi
+Group=nginx
+WorkingDirectory=/opt/{{ APP_NAME }}
+ExecStart=/usr/bin/celery worker -A celery_worker.celery --loglevel=info
+
+[Install]
+WantedBy=multi-user.target

@@ -24,6 +24,7 @@ def load_user(user_id):
 
 
 def create_app(config_level):
+    print('Config level: {}'.format(config_level))
     app = Flask(__name__)
     app.config.from_object(config[config_level])
     Bootstrap(app)
