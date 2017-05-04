@@ -22,8 +22,8 @@
       - MySQL-python
 
     - remote_logs:
-      - dir: "/var/log/uwsgi"
-        log: "/var/log/uwsgi/{{ APP_NAME }}.log"
+      - dir: /var/log/uwsgi
+        log: '/var/log/uwsgi/{{ APP_NAME }}.log'
 
   environment:
     SECRET_KEY: "secret"
@@ -81,6 +81,13 @@
         owner: '{{ APP_USER }}'
         group: '{{ APP_USER_GROUP }}'
 
+    - name: Permissions for /run/uwsgi directory
+      file:
+        path: /run/uwsgi
+        mode: 0666
+        owner: '{{ APP_USER }}'
+        group: '{{ APP_USER_GROUP }}'
+
     - name: Copy uWSGI ini file
       template:
         src: uwsgi.ini.j2
@@ -105,10 +112,7 @@
       notify: assign_createdb
 
     - name: Enable MariaDB
-      systemd:
-        name: mariadb
-        state: started
-        enabled: true
+      systemd: name=mariadb state=started enabled=true
 
     - name: Update root MariaDB pass
       mysql_user:
