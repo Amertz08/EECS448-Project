@@ -28,7 +28,8 @@ mysql> grant all privileges on EECS448_test.* to 'EECS448'@'localhost';
 ```
 To run tests do the following.
 ```bash
-$ python app/manage.py test
+$ cd app
+/app $ python manage.py test
 ```
 
 
