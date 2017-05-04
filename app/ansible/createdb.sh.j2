@@ -1,0 +1,6 @@
+#!/bin/bash
+
+export APP_CONFIG={{ APP_CONFIG }}
+
+/usr/bin/python /opt/{{ APP_NAME }}/manage.py createdb
+echo "DONE!"

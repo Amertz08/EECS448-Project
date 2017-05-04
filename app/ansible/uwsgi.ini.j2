@@ -1,0 +1,10 @@
+[uwsgi]
+module = wsgi
+callable = app
+master = true
+processes = 4
+chmod-socket = 666
+socket = /tmp/{{ APP_NAME }}.sock
+vacuum = true
+die-on-term = true
+logto2 = /var/log/uwsgi/{{ APP_NAME }}.log

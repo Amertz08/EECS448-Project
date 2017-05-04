@@ -144,3 +144,6 @@ local_config.py
 JSON
 *.map
 *.rdb
+*.retry
+*.sock
+.vagrant

@@ -1,0 +1,197 @@
+- name: local dev tickets app
+  hosts:
+    - tickets
+  vars:
+    - APP_NAME: tickets
+    - APP_USER: uwsgi
+    - APP_USER_GROUP: nginx
+    - APP_CONFIG: production
+    - MYSQL_USER: tickets
+    - MYSQL_PASS: pass
+    - MYSQL_ROOT_PASS: password
+    - remote_dependencies:
+      - epel-release
+      - gcc
+      - python-devel
+      - python-pip
+      - vim
+      - redis
+      - uwsgi
+      - nginx
+      - mariadb-server
+      - MySQL-python
+
+    - remote_logs:
+      - dir: /var/log/uwsgi
+        log: '/var/log/uwsgi/{{ APP_NAME }}.log'
+
+  environment:
+    SECRET_KEY: "secret"
+    SKYSCANNER_API_KEY: "key"
+
+  tasks:
+    - name: Install yum dependencies
+      yum:
+        name: '{{ remote_dependencies }}'
+        state: latest
+      notify: restart_redis
+
+    - name: Install pip dependencies
+      pip:
+        requirements: '/opt/{{ APP_NAME }}/requirements.txt'
+
+    - name: Copy NGINX config
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+
+    - name: Copy Tickets config
+      template:
+        src: tickets.conf.j2
+        dest: '/etc/nginx/conf.d/{{ APP_NAME }}.conf'
+      notify: restart_nginx
+
+    - name: Create uWSGI user
+      user:
+        name: "{{ APP_USER }}"
+        group: "{{ APP_USER_GROUP }}"
+        shell: /bin/bash
+
+    - name: Create log directories
+      file:
+        path: '{{ item.dir }}'
+        state: directory
+        mode: 0755
+        owner: '{{ APP_USER }}'
+      with_items: "{{ remote_logs }}"
+
+    - name: Create log files
+      file:
+        path: '{{ item.log }}'
+        state: touch
+        mode: 0755
+        owner: '{{ APP_USER }}'
+      with_items: "{{ remote_logs }}"
+
+    - name: Create uWSGI config directory
+      file:
+        path: '/etc/{{ APP_NAME }}'
+        state: directory
+        mode: 0755
+        owner: '{{ APP_USER }}'
+        group: '{{ APP_USER_GROUP }}'
+
+    - name: Permissions for /run/uwsgi directory
+      file:
+        path: /run/uwsgi
+        mode: 0666
+        owner: '{{ APP_USER }}'
+        group: '{{ APP_USER_GROUP }}'
+
+    - name: Copy uWSGI ini file
+      template:
+        src: uwsgi.ini.j2
+        dest: '/etc/{{ APP_NAME }}/{{ APP_NAME }}.ini'
+
+    - name: Copy uWSGI service
+      template:
+        src: uwsgi.service.j2
+        dest: '/etc/systemd/system/{{ APP_NAME }}.service'
+      notify: restart_tickets
+
+    - name: Create Celery service
+      template:
+        src: celery.service.j2
+        dest: /etc/systemd/system/celery-worker.service
+      notify: restart_celery
+
+    - name: Copy createdb script
+      template:
+        src: createdb.sh.j2
+        dest: /usr/local/bin/createdb.sh
+      notify: assign_createdb
+
+    - name: Enable MariaDB
+      systemd: name=mariadb state=started enabled=true
+
+    - name: Update root MariaDB pass
+      mysql_user:
+        name: root
+        host: '{{ item }}'
+        password: '{{ MYSQL_ROOT_PASS }}'
+      with_items:
+        - '{{ ansible_hostname }}'
+        - 127.0.0.1
+        - ::1
+        - localhost
+
+    - name: Copy .my.cnf file with root credentials
+      template:
+        src: my.cnf.j2
+        dest: /root/.my.cnf
+        owner: root
+        mode: 0600
+      notify: restart_mariadb
+
+    - name: Remove anonymous users
+      mysql_user:
+        name: ''
+        host: '{{ item }}'
+        state: absent
+      with_items:
+        - localhost
+        - '{{ ansible_hostname }}'
+
+    - name: Create production database
+      mysql_db:
+        name: tickets
+        state: present
+
+    - name: Create DB user
+      mysql_user:
+        state: present
+        name: '{{ MYSQL_USER }}'
+        host: localhost
+        password: '{{ MYSQL_PASS }}'
+        priv: tickets.*:ALL
+
+    - name: Create DB tables
+      script: /usr/local/bin/createdb.sh
+      become_user: uwsgi
+
+    - name: Remove test db
+      mysql_db:
+        name: test
+        state: absent
+
+  handlers:
+    - name: restart_nginx
+      service:
+        name: nginx
+        state: reloaded
+
+    - name: restart_tickets
+      service:
+        name: '{{ APP_NAME }}'
+        state: restarted
+
+    - name: restart_celery
+      service:
+        name: celery-worker
+        state: restarted
+
+    - name: restart_redis
+      service:
+        name: redis
+        state: restarted
+
+    - name: restart_mariadb
+      service:
+        name: mysql
+        state: reloaded
+
+    - name: assign_createdb
+      file:
+        path: /usr/local/bin/createdb.sh
+        owner: '{{ APP_USER }}'
+        group: '{{ APP_USER_GROUP }}'

@@ -30,3 +30,12 @@ To run tests do the following.
 ```bash
 $ python app/manage.py test
 ```
+
+
+## Vagrant
+
+Wasn't able to resolve issue with Nginx not having permissions to the socket.
+
+```
+$ vagrant up --provision
+```

@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI instance to serve {{ APP_NAME }}
+After=network.target
+
+[Service]
+User=uwsgi
+Group=nginx
+Environment=APP_CONFIG=production
+WorkingDirectory=/opt/{{ APP_NAME }}
+ExecStart=/usr/bin/uwsgi --ini /etc/{{ APP_NAME }}/{{ APP_NAME }}.ini
+
+[Install]
+WantedBy=multi-user.target

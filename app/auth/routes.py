@@ -60,11 +60,13 @@ def register():
             return render_template('auth/register.html', form=form)
 
         flash('You are now registered.')
+        token = user.generate_confirmation_token()
         context = {
             'first_name': user.first_name,
             'last_name': user.last_name,
-            'token': user.generate_confirmation_token()
+            'token': token
         }
+        print(url_for('auth.confirm', token=token, _external=True))
         send_email(
             recipients=[user.email],
             subject='Confirm your email address',
@@ -124,6 +126,7 @@ def forgot_password():
                 'first_name': user.first_name,
                 'token': token
             }
+            print(url_for('auth.reset', token=token, _external=True))
             send_email(
                 recipients=[user.email],
                 subject='Password Reset',
